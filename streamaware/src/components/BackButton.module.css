@@ -1,10 +1,25 @@
 .backButton {
+  position: absolute;
+  top: 0.5rem;
+  left: -0.5rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   padding: 0.5rem 1rem;
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  color: white;
+  font-weight: 500;
+  transition: transform 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.backButton:active {
+  transform: scale(0.95);
+}
+
+.backButton svg {
+  width: 2rem;
+  height: 2rem;
 }

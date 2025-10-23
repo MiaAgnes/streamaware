@@ -32,7 +32,7 @@ export default function StartScreen() {
   return (
     <div className={styles.container}>
       <button onClick={openHelp} className={styles.helpIcon}>
-        <img src="/images/help-icon.svg" alt="Help" />
+        ?
       </button>
       <Button onClick={handleSignUp}>Sign Up</Button>
       <Button onClick={handleLogIn}>Log In</Button>

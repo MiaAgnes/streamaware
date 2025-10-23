@@ -18,15 +18,26 @@
   position: absolute;
   top: 2rem;
   right: 2rem;
-  background: transparent;
-  border: none;
+  background-color: transparent;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.25rem;
+  font-weight: bold;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
   padding: 0;
 }
 
-.helpIcon img {
-  width: 32px;
-  height: 32px;
+.helpIcon:active {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(0.95);
 }
 
 .guestLink {

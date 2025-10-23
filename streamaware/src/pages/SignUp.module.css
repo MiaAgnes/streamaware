@@ -41,6 +41,7 @@ h1 {
   height: 3rem;
   padding: 14px 16px;
   font-size: 16px;
+  border: 2px solid #5B3F68;
   border-radius: 2rem;
   background-color: rgba(255, 255, 255, 0.9);
   color: rgba(52, 46, 54, 0.5);
@@ -55,6 +56,10 @@ h1 {
   align-items: center;
 }
 
+.selectField.selected {
+  color: #342E36;
+}
+
 .selectField:active {
   border-color: #7B5F88;
   background-color: #ffffff;
@@ -63,7 +68,7 @@ h1 {
 
 .errorIcon {
   position: absolute;
-  right: -40px;
+  left: -40px;
   color: #ff6b6b;
   font-size: 24px;
   font-weight: bold;
@@ -93,5 +98,32 @@ h1 {
 }
 
 .signUpButton {
-  margin-top: 4rem;
-} 
+  margin-top: 2.5rem;
+  background-color: #261C2B;
+  color: white;
+}
+
+.helpIcon {
+  position: absolute;
+  right: -40px;
+  background-color: transparent;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+}
+
+.helpIcon:active {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(0.95);
+}
