@@ -1,4 +1,9 @@
-// Button component
-export default function Button() {
-  return <button>Button</button>;
+import styles from './Button.module.css';
+
+export default function Button({ children, onClick }) {
+  return (
+    <button className={styles.button} onClick={onClick}>
+      {children}
+    </button>
+  );
 }
