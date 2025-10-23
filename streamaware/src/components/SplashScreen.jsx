@@ -1,5 +1,6 @@
 import { useRive } from '@rive-app/react-canvas';
 import { useEffect } from 'react';
+import styles from './SplashScreen.module.css';
 
 export default function SplashScreen({ onComplete }) {
   const { RiveComponent, rive } = useRive({
@@ -34,18 +35,7 @@ export default function SplashScreen({ onComplete }) {
   }, [rive, onComplete]);
 
   return (
-    <div style={{
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(to bottom, #342E36, #5B3F68)',
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      overflow: 'hidden',
-    }}>
+    <div className={styles.container}>
       <RiveComponent style={{ width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%' }} />
     </div>
   );
