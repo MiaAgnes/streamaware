@@ -11,6 +11,22 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  position: relative;
+}
+
+.helpIcon {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.helpIcon img {
+  width: 32px;
+  height: 32px;
 }
 
 .guestLink {
