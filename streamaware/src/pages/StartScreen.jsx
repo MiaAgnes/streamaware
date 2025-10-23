@@ -11,6 +11,12 @@ export default function StartScreen() {
     <div className={styles.container}>
       <Button onClick={handleClick}>Sign Up</Button>
       <Button onClick={handleClick}>Log In</Button>
+      <div className={styles.guestLink}>
+        <a href="/Homepage">Continue as a guest</a>
+        <div>
+        <p className={styles.termsOfService}>By continuing, you agree to our Terms of Service and Privacy Policy.</p>
+        </div>
+      </div>
     </div>
   );
 }
