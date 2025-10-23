@@ -1,6 +1,10 @@
 import { useState } from 'react'
-import SplashScreen from './components/SplashScreen'
-import StartScreen from './pages/StartScreen'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
+import SplashScreen from './components/SplashScreen.jsx'
+import StartScreen from './pages/StartScreen.jsx'
+import SignUp from './pages/SignUp.jsx'
+import LogIn from './pages/LogIn.jsx'
+import Homepage from './pages/Homepage.jsx'
 import './App.css'
 
 function App() {
@@ -14,7 +18,17 @@ function App() {
     return <SplashScreen onComplete={handleSplashComplete} />
   }
 
-  return <StartScreen />
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<StartScreen />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<LogIn />} />
+        <Route path="/homepage" element={<Homepage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
 export default App

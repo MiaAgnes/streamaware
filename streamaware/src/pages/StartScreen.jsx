@@ -1,19 +1,24 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import styles from './StartScreen.module.css';
 import Button from '../components/Button';
 import HelpPopup from '../components/HelpPopup';
 
 export default function StartScreen() {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleSignUp = () => {
-    console.log('Sign Up clicked!');
-    // Navigation til SignUp side
+    navigate('/signup');
   };
 
   const handleLogIn = () => {
-    console.log('Log In clicked!');
-    // Navigation til LogIn side
+    navigate('/login');
+  };
+
+  const handleGuestContinue = (e) => {
+    e.preventDefault();
+    navigate('/homepage');
   };
 
   const openHelp = () => {
@@ -32,7 +37,7 @@ export default function StartScreen() {
       <Button onClick={handleSignUp}>Sign Up</Button>
       <Button onClick={handleLogIn}>Log In</Button>
       <div className={styles.guestLink}>
-        <a href="/homepage">Continue as a guest</a>
+        <a href="/homepage" onClick={handleGuestContinue}>Continue as a guest</a>
       </div>
       <p className={styles.termsOfService}>
         By continuing, you agree to our Terms of Service and Privacy Policy.
