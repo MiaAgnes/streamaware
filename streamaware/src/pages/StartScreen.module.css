@@ -1,11 +1,10 @@
 .container {
     display: flex;
     flex-direction: column;
-    gap: 2.5rem;
+    gap: 2rem;
   width: 100%;
   height: 100%;
   justify-content: flex-end;
-  padding-bottom: 8rem;
   align-items: center;
   background-color: #5B3F68;
   background-image: url('/images/startscreen.png');
@@ -24,6 +23,7 @@
 .guestLink a {
     color: #ffffff;
     text-decoration: underline;
+    margin-top: -0.5rem;
 }
 
 .guestLink a:hover {
@@ -36,6 +36,9 @@
     font-size: 0.875rem;
     text-align: center;
     max-width: 300px;
+    padding-top: 5rem;
+    padding-bottom: 1rem;
+    color: #ffffff;
 }
 
 
