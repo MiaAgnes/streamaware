@@ -5,6 +5,9 @@ import StartScreen from './pages/StartScreen.jsx'
 import SignUp from './pages/SignUp.jsx'
 import LogIn from './pages/LogIn.jsx'
 import Homepage from './pages/Homepage.jsx'
+import Search from './pages/Search.jsx'
+import Favorites from './pages/Favorites.jsx'
+import Profile from './pages/Profile.jsx'
 import './App.css'
 
 function App() {
@@ -25,6 +28,9 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/homepage" element={<Homepage />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/favorites" element={<Favorites />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

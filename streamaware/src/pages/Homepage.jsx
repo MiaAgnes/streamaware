@@ -21,7 +21,7 @@ export default function Homepage() {
 
   // Mock data for content
   const featuredContent = [
-    { id: 1, title: 'Wednesday', image: '/images/wednesday.svg' },
+    { id: 1, title: 'Wednesday', image: '/images/wednesday.png' },
     { id: 2, title: 'Druk', image: '/images/druk.png' },
     { id: 3, title: 'Lucifer', image: '/images/lucifer.png' },
     { id: 4, title: 'Run', image: '/images/run.png' },
