@@ -1,4 +1,10 @@
+.logoWrapper {
+  display: flex;
+  justify-content: center;
+}
+
 .logo {
-  width: 100px;
+  width: 15rem;
   height: auto;
+  margin-top: 0.75rem;
 }

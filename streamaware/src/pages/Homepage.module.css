@@ -1,5 +1,9 @@
 .container {
   width: 100%;
   height: 100%;
-  padding: 1rem;
+  background: linear-gradient(to bottom, #342E36, #5B3F68);
+  position: fixed;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
 }
