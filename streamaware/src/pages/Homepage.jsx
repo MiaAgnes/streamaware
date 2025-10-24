@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import styles from './Homepage.module.css';
 import Logo from '../components/Logo.jsx';
 
 export default function Homepage() {
   const navigate = useNavigate();
-  const [activeFilter, setActiveFilter] = useState('Movies');
+  const [activeFilter, setActiveFilter] = useState(null);
+  const carouselRef = useRef(null);
 
   const filters = ['Movies', 'Series', 'Languages', 'Categories'];
 
@@ -21,9 +22,79 @@ export default function Homepage() {
   // Mock data for content
   const featuredContent = [
     { id: 1, title: 'Wednesday', image: '/images/wednesday.svg' },
-    { id: 2, title: 'KPOP Demon Hunters', image: '/images/kpop.svg' },
-    { id: 3, title: 'Smuk', image: '/images/smuk.svg' }
+    { id: 2, title: 'Druk', image: '/images/druk.png' },
+    { id: 3, title: 'Lucifer', image: '/images/lucifer.png' },
+    { id: 4, title: 'Run', image: '/images/run.png' },
+    { id: 5, title: 'Clickbait', image: '/images/clickbait.png' },
+    { id: 6, title: 'Victorious', image: '/images/victorious.png' }
   ];
+
+  // Create infinite loop by duplicating content more times
+  const infiniteFeatured = [
+    ...featuredContent, 
+    ...featuredContent, 
+    ...featuredContent,
+    ...featuredContent,
+    ...featuredContent
+  ];
+
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    // Set initial position in the middle
+    const setInitialPosition = () => {
+      if (!carousel) return;
+      const itemWidth = carousel.scrollWidth / infiniteFeatured.length;
+      const targetScroll = itemWidth * (featuredContent.length * 2);
+      
+      carousel.style.scrollBehavior = 'auto';
+      carousel.scrollLeft = targetScroll;
+      
+      requestAnimationFrame(() => {
+        carousel.style.scrollBehavior = 'smooth';
+      });
+    };
+
+    const timer = setTimeout(setInitialPosition, 300);
+
+    let scrollTimeout;
+    const handleScroll = () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        const itemWidth = carousel.scrollWidth / infiniteFeatured.length;
+        const scrollLeft = carousel.scrollLeft;
+        const currentIndex = Math.round(scrollLeft / itemWidth);
+        
+        // If scrolled too far right, jump back
+        if (currentIndex >= featuredContent.length * 4) {
+          const offset = currentIndex % featuredContent.length;
+          carousel.style.scrollBehavior = 'auto';
+          carousel.scrollLeft = itemWidth * (featuredContent.length * 2 + offset);
+          requestAnimationFrame(() => {
+            carousel.style.scrollBehavior = 'smooth';
+          });
+        }
+        // If scrolled too far left, jump forward
+        else if (currentIndex < featuredContent.length) {
+          const offset = currentIndex % featuredContent.length;
+          carousel.style.scrollBehavior = 'auto';
+          carousel.scrollLeft = itemWidth * (featuredContent.length * 2 + offset);
+          requestAnimationFrame(() => {
+            carousel.style.scrollBehavior = 'smooth';
+          });
+        }
+      }, 150);
+    };
+
+    carousel.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      carousel.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimeout);
+      clearTimeout(timer);
+    };
+  }, [featuredContent.length, infiniteFeatured.length]);
 
   const recommended = [
     { id: 1, title: 'Ginny & Georgia', image: '/images/ginnyandgeorgia.svg' },
@@ -50,7 +121,7 @@ export default function Homepage() {
           <button
             key={filter}
             className={`${styles.filterButton} ${activeFilter === filter ? styles.active : ''}`}
-            onClick={() => setActiveFilter(filter)}
+            onClick={() => setActiveFilter(activeFilter === filter ? null : filter)}
           >
             {filter}
           </button>
@@ -60,17 +131,13 @@ export default function Homepage() {
       {/* Scrollable Content */}
       <div className={styles.content}>
         {/* Featured Carousel */}
-        <div className={styles.carouselSection}>
-          <div className={styles.carousel}>
-            <button className={styles.carouselArrow}>‹</button>
-            <div className={styles.carouselContent}>
-              {featuredContent.map((item) => (
-                <div key={item.id} className={styles.carouselItem}>
-                  <img src={item.image} alt={item.title} />
-                </div>
-              ))}
-            </div>
-            <button className={styles.carouselArrow}>›</button>
+        <div className={styles.featuredSection}>
+          <div className={styles.featuredCarousel} ref={carouselRef}>
+            {infiniteFeatured.map((item, index) => (
+              <div key={`${item.id}-${index}`} className={styles.featuredItem}>
+                <img src={item.image} alt={item.title} />
+              </div>
+            ))}
           </div>
         </div>
 
@@ -93,32 +160,24 @@ export default function Homepage() {
         {/* Recommended */}
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Recommended</h2>
-          <div className={styles.carousel}>
-            <button className={styles.carouselArrow}>‹</button>
-            <div className={styles.horizontalScroll}>
-              {recommended.map((item) => (
-                <div key={item.id} className={styles.contentCard}>
-                  <img src={item.image} alt={item.title} />
-                </div>
-              ))}
-            </div>
-            <button className={styles.carouselArrow}>›</button>
+          <div className={styles.horizontalScroll}>
+            {recommended.map((item) => (
+              <div key={item.id} className={styles.contentCard}>
+                <img src={item.image} alt={item.title} />
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Most Searched */}
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Most searched</h2>
-          <div className={styles.carousel}>
-            <button className={styles.carouselArrow}>‹</button>
-            <div className={styles.horizontalScroll}>
-              {mostSearched.map((item) => (
-                <div key={item.id} className={styles.contentCard}>
-                  <img src={item.image} alt={item.title} />
-                </div>
-              ))}
-            </div>
-            <button className={styles.carouselArrow}>›</button>
+          <div className={styles.horizontalScroll}>
+            {mostSearched.map((item) => (
+              <div key={item.id} className={styles.contentCard}>
+                <img src={item.image} alt={item.title} />
+              </div>
+            ))}
           </div>
         </div>
 
