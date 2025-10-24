@@ -3,7 +3,7 @@
   height: 3rem;
   padding: 14px 16px;
   font-size: 16px; /* Vigtigt: 16px eller større forhindrer auto-zoom på iPhone */
-  border: 2px solid #5B3F68;
+  border: none;
   border-radius: 2rem;
   background-color: rgba(255, 255, 255, 0.9);
   color: #342E36;
@@ -15,7 +15,6 @@
 }
 
 .input:focus {
-  border-color: #7B5F88;
   background-color: #ffffff;
   box-shadow: 0 0 0 3px rgba(91, 63, 104, 0.1);
 }

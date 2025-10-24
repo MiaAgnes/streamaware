@@ -21,6 +21,7 @@ export default function SignUp() {
     country: false,
     password: false
   });
+  const [submitted, setSubmitted] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
@@ -57,6 +58,7 @@ export default function SignUp() {
   };
 
   const handleSignUp = () => {
+    setSubmitted(true);
     const newErrors = {
       username: false,
       email: false,
@@ -111,26 +113,71 @@ export default function SignUp() {
       <BackButton />
       <h1>Sign up</h1>
       <div className={styles.form}>
-        <div className={styles.inputWrapper}>
-          <InputFields
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoComplete="username"
-          />
-          {errors.username && <span className={styles.errorIcon}>!</span>}
-        </div>
-        <div className={styles.inputWrapper}>
-          <InputFields
-            type="email"
-            placeholder="E-mail"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-          />
-          {errors.email && <span className={styles.errorIcon}>!</span>}
-        </div>
+          {/* Username */}
+          <div className={styles.inputWrapper}>
+            <InputFields
+              name="username"
+              type="text"
+              placeholder="Username"
+              autoComplete="username"
+              value={username}
+              onChange={e => {
+                setUsername(e.target.value);
+                if (errors.username) {
+                  if (e.target.value.trim() && validateUsername(e.target.value)) {
+                    setErrors(prev => ({ ...prev, username: false }));
+                  }
+                }
+              }}
+            />
+            {errors.username && username && submitted && (
+              <span className={styles.fieldError}>Only letters, numbers and _ allowed</span>
+            )}
+          </div>
+
+          {/* Email */}
+          <div className={styles.inputWrapper}>
+            <InputFields
+              name="email"
+              type="email"
+              placeholder="E-mail"
+              autoComplete="email"
+              value={email}
+              onChange={e => {
+                setEmail(e.target.value);
+                if (errors.email) {
+                  if (e.target.value.trim() && validateEmail(e.target.value)) {
+                    setErrors(prev => ({ ...prev, email: false }));
+                  }
+                }
+              }}
+            />
+            {errors.email && email && submitted && (
+              <span className={styles.fieldError}>Please enter a valid email address</span>
+            )}
+          </div>
+
+          {/* Password */}
+          <div className={styles.inputWrapper}>
+            <InputFields
+              name="password"
+              type="password"
+              placeholder="Password"
+              autoComplete="new-password"
+              value={password}
+              onChange={e => {
+                setPassword(e.target.value);
+                if (errors.password) {
+                  if (e.target.value.trim() && e.target.value.length >= 6) {
+                    setErrors(prev => ({ ...prev, password: false }));
+                  }
+                }
+              }}
+            />
+            {errors.password && password && submitted && (
+              <span className={styles.fieldError}>Password must be at least 6 characters</span>
+            )}
+          </div>
         <div className={styles.inputWrapper}>
           <div 
             className={`${styles.selectField} ${country ? styles.selected : ''}`} 
@@ -138,18 +185,10 @@ export default function SignUp() {
           >
             {country || 'Select Country'}
           </div>
-          {errors.country && <span className={styles.errorIcon}>!</span>}
           <button onClick={() => setIsHelpOpen(true)} className={styles.helpIcon}>?</button>
-        </div>
-        <div className={styles.inputWrapper}>
-          <InputFields
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="new-password"
-          />
-          {errors.password && <span className={styles.errorIcon}>!</span>}
+          {errors.country && submitted && (
+            <span className={styles.fieldError}>Please select a country</span>
+          )}
         </div>
         <Button className={styles.signUpButton} onClick={handleSignUp}>Sign Up</Button>
       </div>
