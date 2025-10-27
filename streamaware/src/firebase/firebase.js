@@ -3,18 +3,25 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// 🔥 Din Firebase-konfiguration (fra Firebase Console)
+// 🔥 Your NEW Firebase configuration from Firebase Console
 const firebaseConfig = {
-  apiKey: "AIzaSyBaBan72lAaxWgiCp31B1KKQUH0RcuTYKs",
-  authDomain: "streamaware-3f91a.firebaseapp.com",
-  projectId: "streamaware-3f91a",
-  storageBucket: "streamaware-3f91a.appspot.com",
-  messagingSenderId: "959006923590",
-  appId: "1:959006923590:web:bf9dfe1053dfb29a8ba347"
+  apiKey: "AIzaSyDVv2A230kO4rfrWyUpocZonZQ37cEdv6k",
+  authDomain: "streamaware-app-3093a.firebaseapp.com",
+  projectId: "streamaware-app-3093a",
+  storageBucket: "streamaware-app-3093a.firebasestorage.app",
+  messagingSenderId: "229925050973",
+  appId: "1:229925050973:web:b31b592120302a8d3c0bb4"
 };
 
-// 🧩 Initialiser Firebase
-const app = initializeApp(firebaseConfig);
+// 🧩 Initialize Firebase
+let app;
+try {
+  app = initializeApp(firebaseConfig);
+  console.log("✅ Firebase initialized successfully with new project:", firebaseConfig.projectId);
+} catch (error) {
+  console.error("❌ Firebase initialization error:", error);
+  throw new Error("Failed to initialize Firebase: " + error.message);
+}
 
 // 🔐 Authentication (login, sign-up, logout)
 export const auth = getAuth(app);

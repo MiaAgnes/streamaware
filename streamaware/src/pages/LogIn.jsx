@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { loginUser } from '../firebase/firebaseAuth.js';
 import styles from './LogIn.module.css';
 import InputFields from '../components/InputFields.jsx';
 import Button from '../components/Button.jsx';
@@ -16,6 +17,7 @@ export default function LogIn() {
     password: false
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleTouchStart = (e) => {
     setTouchStart(e.targetTouches[0].clientX);
@@ -39,7 +41,12 @@ export default function LogIn() {
     return usernameRegex.test(input) || emailRegex.test(input);
   };
 
-  const handleLogIn = () => {
+  const isEmail = (input) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(input);
+  };
+
+  const handleLogIn = async () => {
     setSubmitted(true);
     const newErrors = {
       usernameOrEmail: false,
@@ -60,14 +67,46 @@ export default function LogIn() {
 
     setErrors(newErrors);
 
-    // If there are errors, stop here
+    // If there are validation errors, stop here
     if (Object.values(newErrors).some(error => error)) {
       return;
     }
 
-    // All validations passed - navigate to homepage
-    // TODO: Add Firebase authentication here
-    navigate('/homepage');
+    // Note: Firebase Auth only supports email login, not username
+    // If user enters username, we'll need to show an error
+    if (!isEmail(usernameOrEmail)) {
+      setErrors(prev => ({ ...prev, usernameOrEmail: true }));
+      alert('Please use your email address to log in. Firebase Authentication requires email, not username.');
+      return;
+    }
+
+    // All validations passed - try to log in with Firebase
+    setIsLoading(true);
+    try {
+      await loginUser(usernameOrEmail, password);
+      console.log("✅ User successfully logged in!");
+      // Navigate to homepage on successful login
+      navigate('/homepage');
+    } catch (error) {
+      console.error("❌ Login error:", error.message);
+      // Handle specific Firebase errors
+      if (error.code === 'auth/user-not-found') {
+        setErrors(prev => ({ ...prev, usernameOrEmail: true }));
+        alert('No account found with this email. Please check your email or sign up.');
+      } else if (error.code === 'auth/wrong-password') {
+        setErrors(prev => ({ ...prev, password: true }));
+        alert('Incorrect password. Please try again.');
+      } else if (error.code === 'auth/invalid-email') {
+        setErrors(prev => ({ ...prev, usernameOrEmail: true }));
+        alert('Invalid email format. Please enter a valid email address.');
+      } else if (error.code === 'auth/too-many-requests') {
+        alert('Too many failed login attempts. Please try again later.');
+      } else {
+        alert('Login failed: ' + error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -84,9 +123,9 @@ export default function LogIn() {
         <div className={styles.inputWrapper}>
           <InputFields
             name="usernameOrEmail"
-            type="text"
-            placeholder="Username or Email"
-            autoComplete="username"
+            type="email"
+            placeholder="Email"
+            autoComplete="email"
             value={usernameOrEmail}
             onChange={e => {
               setUsernameOrEmail(e.target.value);
@@ -98,7 +137,7 @@ export default function LogIn() {
             }}
           />
           {errors.usernameOrEmail && usernameOrEmail && submitted && (
-            <span className={styles.fieldError}>Please enter a valid username or email</span>
+            <span className={styles.fieldError}>Please enter a valid email address</span>
           )}
         </div>
 
@@ -124,7 +163,9 @@ export default function LogIn() {
           )}
         </div>
 
-        <Button className={styles.logInButton} onClick={handleLogIn}>Log In</Button>
+        <Button className={styles.logInButton} onClick={handleLogIn} disabled={isLoading}>
+          {isLoading ? 'Logging In...' : 'Log In'}
+        </Button>
       </div>
     </div>
   );

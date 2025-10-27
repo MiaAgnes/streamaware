@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { registerUser } from '../firebase/firebaseAuth.js';
 import styles from './SignUp.module.css';
 import InputFields from '../components/InputFields.jsx';
 import CountryPopup from '../components/CountryPopup.jsx';
@@ -22,6 +23,7 @@ export default function SignUp() {
     password: false
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
@@ -57,7 +59,7 @@ export default function SignUp() {
     return emailRegex.test(email);
   };
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     setSubmitted(true);
     const newErrors = {
       username: false,
@@ -94,13 +96,33 @@ export default function SignUp() {
 
     setErrors(newErrors);
 
-    // Hvis der er fejl, stop her
+    // If there are validation errors, stop here
     if (Object.values(newErrors).some(error => error)) {
       return;
     }
 
-    // Alle valideringer bestået - naviger til homepage
-    navigate('/homepage');
+    // All validations passed - try to register user with Firebase
+    setIsLoading(true);
+    try {
+      await registerUser(email, password, username, country);
+      console.log("✅ User successfully created!");
+      // Navigate to homepage on successful registration
+      navigate('/homepage');
+    } catch (error) {
+      console.error("❌ Registration error:", error.message);
+      // Handle specific Firebase errors
+      if (error.code === 'auth/email-already-in-use') {
+        setErrors(prev => ({ ...prev, email: true }));
+        alert('This email is already registered. Please use a different email or try logging in.');
+      } else if (error.code === 'auth/weak-password') {
+        setErrors(prev => ({ ...prev, password: true }));
+        alert('Password is too weak. Please choose a stronger password.');
+      } else {
+        alert('Registration failed: ' + error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -190,7 +212,9 @@ export default function SignUp() {
             <span className={styles.fieldError}>Please select a country</span>
           )}
         </div>
-        <Button className={styles.signUpButton} onClick={handleSignUp}>Sign Up</Button>
+        <Button className={styles.signUpButton} onClick={handleSignUp} disabled={isLoading}>
+          {isLoading ? 'Creating Account...' : 'Sign Up'}
+        </Button>
       </div>
       
       {isCountryPopupOpen && (

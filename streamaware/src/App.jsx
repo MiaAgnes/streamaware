@@ -8,7 +8,7 @@ import Homepage from './pages/Homepage.jsx'
 import Search from './pages/Search.jsx'
 import Favorites from './pages/Favorites.jsx'
 import Profile from './pages/Profile.jsx'
-import FirebaseTest from './components/FirebaseTest.jsx'
+
 import './App.css'
 
 function App() {
@@ -32,7 +32,7 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/firebase-test" element={<FirebaseTest />} />
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
