@@ -1,0 +1,10 @@
+# Ignore root-level node modules and lockfile (project lives in streamaware/)
+node_modules/
+package-lock.json
+
+# macOS
+.DS_Store
+
+# Vite / editor temp
+dist/
+.env
