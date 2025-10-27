@@ -2,9 +2,10 @@ import { auth, db } from "./firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut
+  signOut,
+  onAuthStateChanged
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 // Sign up (ny bruger)
 export const registerUser = async (email, password, username, country) => {
@@ -55,4 +56,87 @@ export const logoutUser = async () => {
     console.error("❌ Fejl ved logout:", error.message);
     throw error;
   }
+};
+
+// Get current user data from Firestore
+export const getCurrentUserData = async (userId) => {
+  try {
+    const userDoc = doc(db, "users", userId);
+    const userSnap = await getDoc(userDoc);
+    
+    if (userSnap.exists()) {
+      console.log("✅ User data loaded:", userId);
+      return userSnap.data();
+    } else {
+      console.log("❌ No user data found");
+      return null;
+    }
+  } catch (error) {
+    console.error("❌ Error loading user data:", error);
+    throw error;
+  }
+};
+
+// Add to favorites
+export const addToFavorites = async (userId, contentId, contentType) => {
+  try {
+    const userDoc = doc(db, "users", userId);
+    const favoriteItem = {
+      id: contentId,
+      type: contentType, // 'movie' or 'series'
+      addedAt: new Date()
+    };
+    
+    await updateDoc(userDoc, {
+      favorites: arrayUnion(favoriteItem)
+    });
+    
+    console.log("✅ Added to favorites:", contentId);
+    return true;
+  } catch (error) {
+    console.error("❌ Error adding to favorites:", error);
+    throw error;
+  }
+};
+
+// Remove from favorites
+export const removeFromFavorites = async (userId, contentId) => {
+  try {
+    const userDoc = doc(db, "users", userId);
+    const userData = await getCurrentUserData(userId);
+    
+    if (userData && userData.favorites) {
+      // Find the favorite item to remove
+      const favoriteToRemove = userData.favorites.find(fav => fav.id === contentId);
+      
+      if (favoriteToRemove) {
+        await updateDoc(userDoc, {
+          favorites: arrayRemove(favoriteToRemove)
+        });
+        console.log("✅ Removed from favorites:", contentId);
+        return true;
+      }
+    }
+    
+    return false;
+  } catch (error) {
+    console.error("❌ Error removing from favorites:", error);
+    throw error;
+  }
+};
+
+// Get user favorites
+export const getUserFavorites = async (userId) => {
+  try {
+    const userData = await getCurrentUserData(userId);
+    return userData?.favorites || [];
+  } catch (error) {
+    console.error("❌ Error loading user favorites:", error);
+    throw error;
+  }
+};
+
+// Listen to auth state changes
+export const onAuthStateChange = (callback) => {
+  return onAuthStateChanged(auth, callback);
 };

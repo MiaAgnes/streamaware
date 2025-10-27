@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
 import SplashScreen from './components/SplashScreen.jsx'
+import DataManager from './components/DataManager.jsx'
 import StartScreen from './pages/StartScreen.jsx'
 import SignUp from './pages/SignUp.jsx'
 import LogIn from './pages/LogIn.jsx'
@@ -26,6 +27,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<StartScreen />} />
+        <Route path="/data-manager" element={<DataManager />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/homepage" element={<Homepage />} />
