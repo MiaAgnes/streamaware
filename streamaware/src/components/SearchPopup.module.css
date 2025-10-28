@@ -7,32 +7,39 @@
   background: rgba(0, 0, 0, 0.8);
   z-index: 1000;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
+  height: 100dvh;
+  width: 100vw;
+  -webkit-overflow-scrolling: auto;
 }
 
 .popup {
-  width: 90%;
-  max-width: 400px;
-  max-height: 80vh;
-  background: #2A2A2A;
-  border-radius: 20px;
+  width: 100%;
+  height: 100dvh;
+  background: linear-gradient(to bottom, #232324, #261C2B);
+  border-radius: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .header {
-  padding: 20px 20px 0 20px;
+  padding: max(1rem, env(safe-area-inset-top) + 20px) 20px 0 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .cancelButton {
   background: none;
   border: none;
-  color: #888;
+  color: #836292;
   font-size: 16px;
   cursor: pointer;
   padding: 0;
@@ -40,6 +47,7 @@
 
 .searchContainer {
   padding: 10px 20px 20px 20px;
+  flex-shrink: 0;
 }
 
 .searchBar {
@@ -55,7 +63,8 @@
   width: 20px;
   height: 20px;
   margin-right: 10px;
-  opacity: 0.6;
+  opacity: 0.8;
+  filter: brightness(0);
 }
 
 .searchInput {
@@ -75,6 +84,10 @@
   flex: 1;
   overflow-y: auto;
   padding: 0 20px 20px 20px;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
 }
 
 .loading {

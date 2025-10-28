@@ -53,7 +53,7 @@ export default function Search() {
       <div className={styles.searchContainer}>
         <div className={styles.searchBar} onClick={handleSearchClick}>
           <img src="/images/search-full.svg" alt="Search" className={styles.searchIcon} />
-          <span className={styles.searchPlaceholder}>Search for movie or serie..</span>
+          <span className={styles.searchPlaceholder}>Search for movie or series..</span>
           <img src="/images/help-icon.svg" alt="Filter" className={styles.filterIcon} />
         </div>
       </div>

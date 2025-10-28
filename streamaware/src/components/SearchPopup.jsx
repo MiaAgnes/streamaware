@@ -7,6 +7,67 @@ export default function SearchPopup({ isOpen, onClose }) {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Prevent body scroll when popup is open
+  useEffect(() => {
+    if (isOpen) {
+      // Get the current scroll position
+      const scrollY = window.scrollY;
+      
+      // Store original values
+      const originalStyle = {
+        overflow: document.body.style.overflow,
+        position: document.body.style.position,
+        width: document.body.style.width,
+        height: document.body.style.height,
+        top: document.body.style.top
+      };
+
+      // Apply scroll lock with current scroll position
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+      document.body.style.top = `-${scrollY}px`;
+      
+      // Prevent scrolling on the html element as well
+      document.documentElement.style.overflow = 'hidden';
+      document.documentElement.style.height = '100%';
+
+      // Add global touch event listener
+      const preventTouch = (e) => {
+        // Allow touch events inside the results container or search input
+        const resultsContainer = e.target.closest('[class*="resultsContainer"]');
+        const searchInput = e.target.closest('[class*="searchInput"]');
+        const searchBar = e.target.closest('[class*="searchBar"]');
+        
+        if (resultsContainer || searchInput || searchBar) {
+          return; // Allow scrolling in these areas
+        }
+        
+        e.preventDefault();
+      };
+
+      document.addEventListener('touchmove', preventTouch, { passive: false });
+
+      return () => {
+        // Restore original values
+        document.body.style.overflow = originalStyle.overflow;
+        document.body.style.position = originalStyle.position;
+        document.body.style.width = originalStyle.width;
+        document.body.style.height = originalStyle.height;
+        document.body.style.top = originalStyle.top;
+        document.documentElement.style.overflow = '';
+        document.documentElement.style.height = '';
+        
+        // Remove the global touch listener
+        document.removeEventListener('touchmove', preventTouch);
+        
+        // Restore scroll position
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [isOpen]);
+
   // Handle search
   const handleSearch = async (term) => {
     if (!term.trim()) {
@@ -70,7 +131,21 @@ export default function SearchPopup({ isOpen, onClose }) {
         </div>
 
         {/* Search Results */}
-        <div className={styles.resultsContainer}>
+        <div 
+          className={styles.resultsContainer}
+          onTouchStart={() => {
+            // Dismiss keyboard when user starts scrolling
+            if (document.activeElement) {
+              document.activeElement.blur();
+            }
+          }}
+          onScroll={() => {
+            // Also dismiss keyboard on scroll
+            if (document.activeElement) {
+              document.activeElement.blur();
+            }
+          }}
+        >
           {isLoading && (
             <div className={styles.loading}>Searching...</div>
           )}
