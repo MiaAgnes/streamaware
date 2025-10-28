@@ -4,8 +4,6 @@
   background: linear-gradient(to bottom, #342E36, #5B3F68);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
   color: white;
   position: fixed;
@@ -13,10 +11,110 @@
   left: 0;
 }
 
-h1 {
-  font-size: 2rem;
+.header {
+  padding: 0.75rem 1rem 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.logo {
+  height: 40px;
+}
+
+.searchContainer {
+  padding: 0 20px 20px 20px;
+}
+
+.searchBar {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.searchBar:active {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.searchIcon {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  opacity: 0.6;
+}
+
+.searchPlaceholder {
+  flex: 1;
+  color: #666;
+  font-size: 16px;
   font-weight: 400;
-  margin-bottom: 1rem;
+}
+
+.filterIcon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.6;
+}
+
+.content {
+  flex: 1;
+  padding: 0 0.5rem;
+  overflow-y: auto;
+  padding-bottom: 100px; 
+}
+
+.loading {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 40px 20px;
+  font-size: 16px;
+}
+
+.contentGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contentItem {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.contentItem:active {
+  transform: scale(0.98);
+}
+
+.contentImage {
+  width: 11rem;
+  height: 6rem;
+  object-fit: cover;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.contentInfo {
+  flex: 1;
+  text-align: left;
+}
+
+.contentTitle {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  color: white;
+  line-height: 1.3;
 }
 
 .bottomNav {

@@ -1,0 +1,138 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup {
+  width: 90%;
+  max-width: 400px;
+  max-height: 80vh;
+  background: #2A2A2A;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 20px 20px 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cancelButton {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.searchContainer {
+  padding: 10px 20px 20px 20px;
+}
+
+.searchBar {
+  position: relative;
+  background: white;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+}
+
+.searchIcon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  opacity: 0.6;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: #333;
+  background: transparent;
+}
+
+.searchInput::placeholder {
+  color: #999;
+}
+
+.resultsContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 20px 20px 20px;
+}
+
+.loading {
+  text-align: center;
+  color: #888;
+  padding: 40px 20px;
+  font-size: 16px;
+}
+
+.noResults {
+  text-align: center;
+  color: #888;
+  padding: 40px 20px;
+  font-size: 16px;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.resultItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.resultItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.resultImage {
+  width: 60px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #444;
+}
+
+.resultInfo {
+  flex: 1;
+}
+
+.resultTitle {
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 5px 0;
+}
+
+.resultType {
+  color: #888;
+  font-size: 14px;
+  margin: 0;
+}
