@@ -46,3 +46,21 @@
 .closeButton {
   background: transparent;
 }
+
+/* Button variants local to this popup (won't affect global Button) */
+.primaryButton {
+  /* use a stronger accent to indicate primary action */
+  background: linear-gradient(90deg, #7B61FF, #5B3FDC);
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 0.6rem;
+  border: none;
+}
+
+.cancelButton {
+  background: transparent;
+  color: #fff;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(255,255,255,0.08);
+}
