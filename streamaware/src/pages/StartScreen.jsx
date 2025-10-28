@@ -18,6 +18,12 @@ export default function StartScreen() {
 
   const handleGuestContinue = (e) => {
     e.preventDefault();
+    // mark session as guest
+    try {
+      localStorage.setItem('isGuest', '1');
+    } catch (err) {
+      console.warn('Could not set guest flag in localStorage', err);
+    }
     navigate('/homepage');
   };
 

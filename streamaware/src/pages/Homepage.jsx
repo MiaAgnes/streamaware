@@ -2,9 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import styles from './Homepage.module.css';
 import Logo from '../components/Logo.jsx';
+import BottomNav from '../components/BottomNav.jsx';
 
 export default function Homepage() {
-  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState(null);
   const carouselRef = useRef(null);
 
@@ -108,6 +108,8 @@ export default function Homepage() {
     { id: 3, title: 'Dexter', image: '/images/dexter.svg' }
   ];
 
+  const navigate = useNavigate();
+
   return (
     <div className={styles.container}>
       {/* Header with Logo */}
@@ -134,7 +136,11 @@ export default function Homepage() {
         <div className={styles.featuredSection}>
           <div className={styles.featuredCarousel} ref={carouselRef}>
             {infiniteFeatured.map((item, index) => (
-              <div key={`${item.id}-${index}`} className={styles.featuredItem}>
+              <div
+                key={`${item.id}-${index}`}
+                className={styles.featuredItem}
+                onClick={() => navigate('/details', { state: { item } })}
+              >
                 <img src={item.image} alt={item.title} />
               </div>
             ))}
@@ -162,7 +168,11 @@ export default function Homepage() {
           <h2 className={styles.sectionTitle}>Recommended</h2>
           <div className={styles.horizontalScroll}>
             {recommended.map((item) => (
-              <div key={item.id} className={styles.contentCard}>
+              <div
+                key={item.id}
+                className={styles.contentCard}
+                onClick={() => navigate('/details', { state: { item } })}
+              >
                 <img src={item.image} alt={item.title} />
               </div>
             ))}
@@ -174,7 +184,11 @@ export default function Homepage() {
           <h2 className={styles.sectionTitle}>Most searched</h2>
           <div className={styles.horizontalScroll}>
             {mostSearched.map((item) => (
-              <div key={item.id} className={styles.contentCard}>
+              <div
+                key={item.id}
+                className={styles.contentCard}
+                onClick={() => navigate('/details', { state: { item } })}
+              >
                 <img src={item.image} alt={item.title} />
               </div>
             ))}
@@ -191,20 +205,7 @@ export default function Homepage() {
       </div>
 
       {/* Bottom Navigation Bar */}
-      <nav className={styles.bottomNav}>
-        <button className={styles.navButton} onClick={() => navigate('/homepage')}>
-          <img src="/images/home-full.svg" alt="Home" />
-        </button>
-        <button className={styles.navButton} onClick={() => navigate('/search')}>
-          <img src="/images/search-opacity.svg" alt="Search" />
-        </button>
-        <button className={styles.navButton} onClick={() => navigate('/favorites')}>
-          <img src="/images/heart-opacity.svg" alt="Favorites" />
-        </button>
-        <button className={styles.navButton} onClick={() => navigate('/profile')}>
-          <img src="/images/profile-opacity.svg" alt="Profile" />
-        </button>
-      </nav>
+      <BottomNav />
     </div>
   );
 }

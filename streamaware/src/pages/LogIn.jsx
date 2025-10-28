@@ -83,10 +83,18 @@ export default function LogIn() {
     // All validations passed - try to log in with Firebase
     setIsLoading(true);
     try {
-      await loginUser(usernameOrEmail, password);
+  await loginUser(usernameOrEmail, password);
       console.log("✅ User successfully logged in!");
-      // Navigate to homepage on successful login
-      navigate('/homepage');
+      // Clear guest flag
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.removeItem('isGuest');
+      }
+      // Respect any post-login redirect (set when a guest tried to access a protected page)
+      const redirect = (typeof window !== 'undefined' && window.sessionStorage && sessionStorage.getItem('postLoginRedirect')) || '/homepage';
+      if (typeof window !== 'undefined' && window.sessionStorage) {
+        sessionStorage.removeItem('postLoginRedirect');
+      }
+      navigate(redirect);
     } catch (error) {
       console.error("❌ Login error:", error.message);
       // Handle specific Firebase errors

@@ -8,6 +8,7 @@ import Homepage from './pages/Homepage.jsx'
 import Search from './pages/Search.jsx'
 import Favorites from './pages/Favorites.jsx'
 import Profile from './pages/Profile.jsx'
+import DetailsScreen from './pages/DetailsScreen.jsx'
 
 import './App.css'
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/profile" element={<Profile />} />
+  <Route path="/details" element={<DetailsScreen />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

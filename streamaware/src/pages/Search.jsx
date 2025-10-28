@@ -4,6 +4,7 @@ import { getAllMovies, getAllSeries } from '../firebase/firebaseData';
 import SearchPopup from '../components/SearchPopup';
 import styles from './Search.module.css';
 import Logo from '../components/Logo.jsx';
+import BottomNav from '../components/BottomNav.jsx';
 
 export default function Search() {
   const navigate = useNavigate();
@@ -65,14 +66,19 @@ export default function Search() {
         ) : (
           <div className={styles.contentGrid}>
             {allContent.map((item) => (
-              <div key={item.id} className={styles.contentItem}>
-                <img 
-                  src={item.image} 
+              <div
+                key={item.id}
+                className={styles.contentItem}
+                onClick={() => navigate('/details', { state: { item } })}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter') navigate('/details', { state: { item } }); }}
+              >
+                <img
+                  src={item.image}
                   alt={item.title}
                   className={styles.contentImage}
-                  onError={(e) => {
-                    e.target.src = '/images/placeholder.png';
-                  }}
+                  onError={(e) => { e.target.src = '/images/placeholder.png'; }}
                 />
                 <div className={styles.contentInfo}>
                   <h3 className={styles.contentTitle}>{item.title}</h3>
@@ -87,20 +93,7 @@ export default function Search() {
       <SearchPopup isOpen={showPopup} onClose={handleClosePopup} />
       
       {/* Bottom Navigation Bar */}
-      <nav className={styles.bottomNav}>
-        <button className={styles.navButton} onClick={() => navigate('/homepage')}>
-          <img src="/images/home-opacity.svg" alt="Home" />
-        </button>
-        <button className={styles.navButton} onClick={() => navigate('/search')}>
-          <img src="/images/search-full.svg" alt="Search" />
-        </button>
-        <button className={styles.navButton} onClick={() => navigate('/favorites')}>
-          <img src="/images/heart-opacity.svg" alt="Favorites" />
-        </button>
-        <button className={styles.navButton} onClick={() => navigate('/profile')}>
-          <img src="/images/profile-opacity.svg" alt="Profile" />
-        </button>
-      </nav>
+      <BottomNav />
     </div>
   );
 }

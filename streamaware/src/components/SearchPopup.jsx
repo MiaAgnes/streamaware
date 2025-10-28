@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import { searchContent } from '../firebase/firebaseData';
 import styles from './SearchPopup.module.css';
 
 export default function SearchPopup({ isOpen, onClose }) {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -157,14 +159,23 @@ export default function SearchPopup({ isOpen, onClose }) {
           {!isLoading && searchResults.length > 0 && (
             <div className={styles.results}>
               {searchResults.map((item) => (
-                <div key={item.id} className={styles.resultItem}>
-                  <img 
-                    src={item.image} 
+                <div
+                  key={item.id}
+                  className={styles.resultItem}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => {
+                    // Close popup and navigate to details with item
+                    onClose();
+                    navigate('/details', { state: { item } });
+                  }}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { onClose(); navigate('/details', { state: { item } }); } }}
+                >
+                  <img
+                    src={item.image}
                     alt={item.title}
                     className={styles.resultImage}
-                    onError={(e) => {
-                      e.target.src = '/images/placeholder.png'; // Fallback image
-                    }}
+                    onError={(e) => { e.target.src = '/images/placeholder.png'; }}
                   />
                   <div className={styles.resultInfo}>
                     <h3 className={styles.resultTitle}>{item.title}</h3>

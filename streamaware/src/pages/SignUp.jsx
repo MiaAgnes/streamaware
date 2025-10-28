@@ -106,8 +106,14 @@ export default function SignUp() {
     try {
       await registerUser(email, password, username, country);
       console.log("✅ User successfully created!");
-      // Navigate to homepage on successful registration
-      navigate('/homepage');
+      // Clear guest flag
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.removeItem('isGuest');
+      }
+      // Respect any post-login redirect (e.g. guest clicked favorites)
+      const redirect = (typeof window !== 'undefined' && window.sessionStorage && sessionStorage.getItem('postLoginRedirect')) || '/homepage';
+      if (typeof window !== 'undefined' && window.sessionStorage) sessionStorage.removeItem('postLoginRedirect');
+      navigate(redirect);
     } catch (error) {
       console.error("❌ Registration error:", error.message);
       // Handle specific Firebase errors
