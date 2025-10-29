@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamAware Admin Panel</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(to bottom, #342E36, #5B3F68);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            color: #fff;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        form {
+            display: grid;
+            gap: 15px;
+        }
+        
+        input, textarea, select {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .form-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .success {
+            background: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .error {
+            background: #f44336;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .tab-button.active {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎬 StreamAware Admin Panel</h1>
+    
+    <div class="container">
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="showTab('movie')">Add Movie</button>
+            <button class="tab-button" onclick="showTab('series')">Add Series</button>
+        </div>
+        
+        <!-- Movie Form -->
+        <div id="movie-tab" class="tab-content active">
+            <h2>Add a New Movie</h2>
+            <div id="movie-success" class="success"></div>
+            <div id="movie-error" class="error"></div>
+            
+            <form id="addMovieForm">
+                <div class="form-group">
+                    <input id="movieTitle" placeholder="Title" required />
+                    <input id="movieYear" type="number" placeholder="Year" required />
+                </div>
+                
+                <div class="form-group">
+                    <input id="movieCountry" placeholder="Countries (comma separated)" />
+                    <input id="movieLanguage" placeholder="Languages (comma separated)" />
+                </div>
+                
+                <input id="movieSubtitles" placeholder="Subtitles (comma separated)" class="full-width" />
+                
+                <input id="movieGenres" placeholder="Genres (comma separated)" required class="full-width" />
+                <input id="moviePlatforms" placeholder="Platforms (comma separated)" class="full-width" />
+                <input id="movieImage" placeholder="Image path (e.g., /images/movie.jpg)" class="full-width" />
+                <textarea id="movieDescription" placeholder="Description" class="full-width"></textarea>
+                
+                <button type="submit">Add Movie</button>
+            </form>
+        </div>
+        
+        <!-- Series Form -->
+        <div id="series-tab" class="tab-content">
+            <h2>Add a New Series</h2>
+            <div id="series-success" class="success"></div>
+            <div id="series-error" class="error"></div>
+            
+            <form id="addSeriesForm">
+                <div class="form-group">
+                    <input id="seriesTitle" placeholder="Title" required />
+                    <input id="seriesYear" type="number" placeholder="Year" required />
+                </div>
+                
+                <div class="form-group">
+                    <input id="seriesSeasons" type="number" placeholder="Number of Seasons" />
+                    <input id="seriesEpisodes" type="number" placeholder="Total Episodes" />
+                </div>
+                
+                <div class="form-group">
+                    <select id="seriesStatus">
+                        <option value="">Select Status</option>
+                        <option value="Ongoing">Ongoing</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <input id="seriesCountry" placeholder="Countries (comma separated)" />
+                </div>
+                
+                <div class="form-group">
+                    <input id="seriesLanguage" placeholder="Languages (comma separated)" />
+                </div>
+                
+                <input id="seriesSubtitles" placeholder="Subtitles (comma separated)" class="full-width" />
+                
+                <input id="seriesGenres" placeholder="Genres (comma separated)" required class="full-width" />
+                <input id="seriesPlatforms" placeholder="Platforms (comma separated)" class="full-width" />
+                <input id="seriesImage" placeholder="Image path (e.g., /images/series.jpg)" class="full-width" />
+                <textarea id="seriesDescription" placeholder="Description" class="full-width"></textarea>
+                
+                <button type="submit">Add Series</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase functions
+        import { addMovie, addSeries } from './src/firebase/firebaseData.js';
+        
+        // Tab switching
+        window.showTab = function(tab) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tab + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        };
+        
+        // Utility functions
+        function showMessage(type, message, formType) {
+            const element = document.getElementById(`${formType}-${type}`);
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 3000);
+        }
+        
+        function splitAndTrim(value) {
+            return value.split(',').map(item => item.trim()).filter(item => item.length > 0);
+        }
+        
+        // Movie form handler
+        document.getElementById('addMovieForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const form = e.target;
+                const movie = {
+                    title: form.movieTitle.value,
+                    year: Number(form.movieYear.value),
+                    genres: splitAndTrim(form.movieGenres.value),
+                    platforms: splitAndTrim(form.moviePlatforms.value),
+                    description: form.movieDescription.value,
+                    country: form.movieCountry.value ? splitAndTrim(form.movieCountry.value) : null,
+                    language: form.movieLanguage.value ? splitAndTrim(form.movieLanguage.value) : null,
+                    subtitles: form.movieSubtitles.value ? splitAndTrim(form.movieSubtitles.value) : null,
+                    image: form.movieImage.value
+                };
+                
+                // Remove empty values
+                Object.keys(movie).forEach(key => {
+                    if (movie[key] === '' || movie[key] === null) {
+                        delete movie[key];
+                    }
+                });
+                
+                await addMovie(movie);
+                showMessage('success', `✅ Movie "${movie.title}" added successfully!`, 'movie');
+                form.reset();
+                
+            } catch (error) {
+                console.error('Error adding movie:', error);
+                showMessage('error', `❌ Error adding movie: ${error.message}`, 'movie');
+            }
+        });
+        
+        // Series form handler
+        document.getElementById('addSeriesForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const form = e.target;
+                const series = {
+                    title: form.seriesTitle.value,
+                    year: Number(form.seriesYear.value),
+                    genres: splitAndTrim(form.seriesGenres.value),
+                    platforms: splitAndTrim(form.seriesPlatforms.value),
+                    description: form.seriesDescription.value,
+                    seasons: form.seriesSeasons.value ? Number(form.seriesSeasons.value) : null,
+                    episodes: form.seriesEpisodes.value ? Number(form.seriesEpisodes.value) : null,
+                    status: form.seriesStatus.value,
+                    country: form.seriesCountry.value ? splitAndTrim(form.seriesCountry.value) : null,
+                    language: form.seriesLanguage.value ? splitAndTrim(form.seriesLanguage.value) : null,
+                    subtitles: form.seriesSubtitles.value ? splitAndTrim(form.seriesSubtitles.value) : null,
+                    image: form.seriesImage.value
+                };
+                
+                // Remove empty values
+                Object.keys(series).forEach(key => {
+                    if (series[key] === '' || series[key] === null) {
+                        delete series[key];
+                    }
+                });
+                
+                await addSeries(series);
+                showMessage('success', `✅ Series "${series.title}" added successfully!`, 'series');
+                form.reset();
+                
+            } catch (error) {
+                console.error('Error adding series:', error);
+                showMessage('error', `❌ Error adding series: ${error.message}`, 'series');
+            }
+        });
+    </script>
+</body>
+</html>
