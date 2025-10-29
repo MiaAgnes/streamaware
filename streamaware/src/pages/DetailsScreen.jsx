@@ -48,7 +48,6 @@ export default function DetailsScreen() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
   const [showAuthPopup, setShowAuthPopup] = useState(false);
-  const [isHeroLight, setIsHeroLight] = useState(false);
 
   // On mount, load favorites if logged in
   useEffect(() => {
@@ -64,70 +63,7 @@ export default function DetailsScreen() {
     }
   }, [item.id, item.title]);
 
-  // Analyze hero image brightness to switch icon color for contrast
-  useEffect(() => {
-    let cancelled = false;
-    const src = item.hero;
-    if (!src || typeof window === 'undefined') {
-      setIsHeroLight(false);
-      return;
-    }
-
-    const img = new Image();
-    // same-origin images in public should be ok
-    img.crossOrigin = 'Anonymous';
-    img.src = src;
-
-    img.onload = () => {
-      if (cancelled) return;
-      try {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        // draw a small thumbnail to speed up analysis
-        const w = 80;
-        const h = 80;
-        canvas.width = w;
-        canvas.height = h;
-        ctx.drawImage(img, 0, 0, w, h);
-        const data = ctx.getImageData(0, 0, w, h).data;
-        let total = 0;
-        let count = 0;
-
-        // sample only the central area to avoid edges/letterboxing
-        const startX = Math.floor(w * 0.2);
-        const endX = Math.floor(w * 0.8);
-        const startY = Math.floor(h * 0.2);
-        const endY = Math.floor(h * 0.8);
-
-        for (let y = startY; y < endY; y++) {
-          for (let x = startX; x < endX; x++) {
-            const idx = (y * w + x) * 4;
-            const r = data[idx];
-            const g = data[idx + 1];
-            const b = data[idx + 2];
-            const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-            total += lum;
-            count++;
-          }
-        }
-
-        const avg = count ? total / count : 0;
-        // lower threshold for light detection to be more permissive
-        setIsHeroLight(avg > 0.55);
-      } catch (err) {
-        console.warn('Could not analyze hero image for brightness', err);
-        setIsHeroLight(false);
-      }
-    };
-
-    img.onerror = () => {
-      if (!cancelled) setIsHeroLight(false);
-    };
-
-    return () => {
-      cancelled = true;
-    };
-  }, [item.hero]);
+  // we no longer analyze hero brightness — we'll always render a subtle top overlay
 
   return (
     <div className={styles.container}>
@@ -135,9 +71,9 @@ export default function DetailsScreen() {
         className={styles.hero}
         style={{ backgroundImage: `url(${item.hero || '/images/hero-placeholder.png'})` }}
       >
-        <button className={`${styles.back} ${isHeroLight ? styles.darkIcon : ''}`} onClick={() => navigate(-1)}>‹ Back</button>
+        <button className={styles.back} onClick={() => navigate(-1)}>‹ Back</button>
         <button
-          className={`${styles.fav} ${isHeroLight ? styles.darkIcon : ''}`}
+          className={styles.fav}
           aria-label="Favorite"
           onClick={async () => {
             // If guest, show auth-required popup and save origin so we can redirect back

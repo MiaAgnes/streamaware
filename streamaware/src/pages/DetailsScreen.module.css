@@ -24,6 +24,22 @@
   position: relative;
 }
 
+.hero::before {
+  /* translucent dark band + blur at the very top so white icons are always readable
+     Height uses safe-area so it covers notch area on mobile, and ends just below the icons */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(env(safe-area-inset-top, 0px) + 45px);
+  /* stronger near the top and fade to transparent around ~56-68px so icons sit above the blur */
+  background: linear-gradient(to bottom, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.38) 35%);
+  pointer-events: none;
+  z-index: 1;
+  backdrop-filter: blur(6px);
+}
+
 .hero::after {
   /* fade to body */
   content: '';
@@ -37,25 +53,28 @@
 
 .back {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  /* push up, respect safe-area on devices with notches */
+  left: 10px;
   background: transparent;
   color: white;
   border: none;
   font-size: 1rem;
   cursor: pointer;
   transition: color 180ms ease;
+  z-index: 3;
 }
 
 .fav {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  /* push up, respect safe-area on devices with notches */
+  top: calc(env(safe-area-inset-top, 0px) + 3px);
+  right: 10px;
   background: transparent;
   color: white;
   border: none;
   font-size: 1.15rem;
   cursor: pointer;
+  z-index: 3;
 }
 
 .fav img {
@@ -65,12 +84,9 @@
   transition: filter 180ms ease;
 }
 
-.darkIcon {
-  color: #000000;
-}
-.darkIcon img {
-  /* Force icon image to render as solid black for contrast */
-  filter: brightness(0) saturate(100%);
+.fav img {
+  /* slightly increase contrast of the SVG icon when overlay present */
+  filter: drop-shadow(0 0 0 rgba(0,0,0,0));
 }
 
 .body {
