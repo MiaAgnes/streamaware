@@ -26,7 +26,7 @@ export default function Homepage() {
     { name: 'Disney+', logo: '/images/disneyplus.svg' },
     { name: 'HBO Max', logo: '/images/hbomax.png' },
     { name: 'Viaplay', logo: '/images/viaplay.webp' },
-    { name: 'TV2 Play', logo: '/images/tv2play.webp' }
+    { name: 'Apple TV', logo: '/images/apple-tv.webp' }
   ];
 
   // Load content from Firebase
