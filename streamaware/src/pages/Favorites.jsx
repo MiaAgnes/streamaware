@@ -83,9 +83,12 @@ export default function Favorites() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <Logo />
-        <h1>Favorites</h1>
+        <Logo className={styles.logo} />
       </header>
+
+      <div className={styles.titleContainer}>
+        <h1>Favorites</h1>
+      </div>
 
       <main className={styles.content}>
         {loading ? (

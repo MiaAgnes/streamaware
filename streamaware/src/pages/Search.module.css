@@ -65,7 +65,7 @@
   flex: 1;
   padding: 0 0.5rem;
   overflow-y: auto;
-  padding-bottom: 100px; 
+  padding-bottom: 9rem; 
 }
 
 .loading {
@@ -152,4 +152,17 @@
 .navButton img {
   width: 1.65rem;
   height: 1.65rem;
+}
+
+/* Mobile optimization for content padding */
+@media (max-width: 480px) {
+  .content {
+    padding-bottom: 10rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .content {
+    padding-bottom: 10.5rem;
+  }
 }

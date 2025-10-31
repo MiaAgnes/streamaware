@@ -3,9 +3,19 @@ import { useNavigate } from 'react-router';
 import styles from './Homepage.module.css';
 import Logo from '../components/Logo.jsx';
 import BottomNav from '../components/BottomNav.jsx';
+import { getAllMovies, getAllSeries } from '../firebase/firebaseData';
 
 export default function Homepage() {
   const [activeFilter, setActiveFilter] = useState(null);
+  const [featuredContent, setFeaturedContent] = useState([]);
+  const [recommended, setRecommended] = useState([]);
+  const [mostSearched, setMostSearched] = useState([]);
+  const [trending, setTrending] = useState([]);
+  const [newReleases, setNewReleases] = useState([]);
+  const [comedies, setComedies] = useState([]);
+  const [dramas, setDramas] = useState([]);
+  const [action, setAction] = useState([]);
+  const [loading, setLoading] = useState(true);
   const carouselRef = useRef(null);
 
   const filters = ['Movies', 'Series', 'Languages', 'Categories'];
@@ -19,15 +29,93 @@ export default function Homepage() {
     { name: 'TV2 Play', logo: '/images/tv2play.webp' }
   ];
 
-  // Mock data for content
-  const featuredContent = [
-    { id: 1, title: 'Wednesday', image: '/images/wednesday.png' },
-    { id: 2, title: 'Druk', image: '/images/druk.png' },
-    { id: 3, title: 'Lucifer', image: '/images/lucifer.png' },
-    { id: 4, title: 'Run', image: '/images/run.png' },
-    { id: 5, title: 'Clickbait', image: '/images/clickbait.png' },
-    { id: 6, title: 'Victorious', image: '/images/victorious.png' }
-  ];
+  // Load content from Firebase
+  useEffect(() => {
+    const loadFeaturedContent = async () => {
+      try {
+        setLoading(true);
+        const [movies, series] = await Promise.all([
+          getAllMovies(),
+          getAllSeries()
+        ]);
+        
+        // Combine all content
+        const allContent = [...movies, ...series];
+        
+        // Create sections by slicing content - each section gets 3 items
+        const featured = allContent.slice(0, 6).map(item => ({
+          id: item.id,
+          title: item.title,
+          image: item.image || item.posterUrl
+        }));
+        
+        const recommendedItems = allContent.slice(6, 9).map(item => ({
+          id: item.id,
+          title: item.title,
+          image: item.image || item.posterUrl
+        }));
+        
+        const mostSearchedItems = allContent.slice(9, 12).map(item => ({
+          id: item.id,
+          title: item.title,
+          image: item.image || item.posterUrl
+        }));
+        
+        const trendingItems = allContent.slice(12, 15).map(item => ({
+          id: item.id,
+          title: item.title,
+          image: item.image || item.posterUrl
+        }));
+        
+        const newReleasesItems = allContent.slice(15, 18).map(item => ({
+          id: item.id,
+          title: item.title,
+          image: item.image || item.posterUrl
+        }));
+        
+        const comedyItems = allContent.slice(18, 21).map(item => ({
+          id: item.id,
+          title: item.title,
+          image: item.image || item.posterUrl
+        }));
+        
+        const dramaItems = allContent.slice(21, 24).map(item => ({
+          id: item.id,
+          title: item.title,
+          image: item.image || item.posterUrl
+        }));
+        
+        const actionItems = allContent.slice(24, 27).map(item => ({
+          id: item.id,
+          title: item.title,
+          image: item.image || item.posterUrl
+        }));
+        
+        setFeaturedContent(featured);
+        setRecommended(recommendedItems);
+        setMostSearched(mostSearchedItems);
+        setTrending(trendingItems);
+        setNewReleases(newReleasesItems);
+        setComedies(comedyItems);
+        setDramas(dramaItems);
+        setAction(actionItems);
+      } catch (error) {
+        console.error('Error loading content:', error);
+        setFeaturedContent([]);
+        setRecommended([]);
+        setMostSearched([]);
+        setTrending([]);
+        setNewReleases([]);
+        setComedies([]);
+        setDramas([]);
+        setAction([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFeaturedContent();
+  }, []);
 
   // Create infinite loop by duplicating content more times
   const infiniteFeatured = [
@@ -96,18 +184,6 @@ export default function Homepage() {
     };
   }, [featuredContent.length, infiniteFeatured.length]);
 
-  const recommended = [
-    { id: 1, title: 'Ginny & Georgia', image: '/images/ginnyandgeorgia.svg' },
-    { id: 2, title: 'DU', image: '/images/du.svg' },
-    { id: 3, title: 'Black Mirror', image: '/images/blackmirror.svg' }
-  ];
-
-  const mostSearched = [
-    { id: 1, title: 'Squid Game', image: '/images/squidgame.svg' },
-    { id: 2, title: 'Orange is the new Black', image: '/images/orangeisthenewblack.svg' },
-    { id: 3, title: 'Dexter', image: '/images/dexter.svg' }
-  ];
-
   const navigate = useNavigate();
 
   return (
@@ -132,76 +208,154 @@ export default function Homepage() {
 
       {/* Scrollable Content */}
       <div className={styles.content}>
-        {/* Featured Carousel */}
-        <div className={styles.featuredSection}>
-          <div className={styles.featuredCarousel} ref={carouselRef}>
-            {infiniteFeatured.map((item, index) => (
-              <div
-                key={`${item.id}-${index}`}
-                className={styles.featuredItem}
-                onClick={() => navigate('/details', { state: { item } })}
-              >
-                <img src={item.image} alt={item.title} />
+        {loading ? (
+          <div className={styles.loading}>Loading content...</div>
+        ) : (
+          <>
+            {/* Featured Carousel */}
+            <div className={styles.featuredSection}>
+              <div className={styles.featuredCarousel} ref={carouselRef}>
+                {infiniteFeatured.map((item, index) => (
+                  <div
+                    key={`${item.id}-${index}`}
+                    className={styles.featuredItem}
+                    onClick={() => navigate('/details', { state: { item } })}
+                  >
+                    <img src={item.image} alt={item.title} />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Streaming Services */}
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Explore content from these services</h2>
-          <div className={styles.servicesGrid}>
-            {streamingServices.map((service) => (
-              <div key={service.name} className={styles.serviceCard}>
-                <img 
-                  src={service.logo} 
-                  alt={service.name}
-                  className={service.name === 'HBO Max' ? styles.hboMaxLogo : ''}
-                />
+            {/* Streaming Services */}
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>Explore content from these services</h2>
+              <div className={styles.servicesGrid}>
+                {streamingServices.map((service) => (
+                  <div key={service.name} className={styles.serviceCard}>
+                    <img 
+                      src={service.logo} 
+                      alt={service.name}
+                      className={service.name === 'HBO Max' ? styles.hboMaxLogo : ''}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Recommended */}
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Recommended</h2>
-          <div className={styles.horizontalScroll}>
-            {recommended.map((item) => (
-              <div
-                key={item.id}
-                className={styles.contentCard}
-                onClick={() => navigate('/details', { state: { item } })}
-              >
-                <img src={item.image} alt={item.title} />
+            {/* Recommended */}
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>Recommended</h2>
+              <div className={styles.horizontalScroll}>
+                {recommended.map((item) => (
+                  <div
+                    key={item.id}
+                    className={styles.contentCard}
+                    onClick={() => navigate('/details', { state: { item } })}
+                  >
+                    <img src={item.image} alt={item.title} />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Most Searched */}
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Most searched</h2>
-          <div className={styles.horizontalScroll}>
-            {mostSearched.map((item) => (
-              <div
-                key={item.id}
-                className={styles.contentCard}
-                onClick={() => navigate('/details', { state: { item } })}
-              >
-                <img src={item.image} alt={item.title} />
+            {/* Most Searched */}
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>Most searched</h2>
+              <div className={styles.horizontalScroll}>
+                {mostSearched.map((item) => (
+                  <div
+                    key={item.id}
+                    className={styles.contentCard}
+                    onClick={() => navigate('/details', { state: { item } })}
+                  >
+                    <img src={item.image} alt={item.title} />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Comedies */}
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Comedies</h2>
-          <div className={styles.horizontalScroll}>
-            {/* Add comedy content here */}
-          </div>
-        </div>
+            {/* Trending */}
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>Trending Now</h2>
+              <div className={styles.horizontalScroll}>
+                {trending.map((item) => (
+                  <div
+                    key={item.id}
+                    className={styles.contentCard}
+                    onClick={() => navigate('/details', { state: { item } })}
+                  >
+                    <img src={item.image} alt={item.title} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* New Releases */}
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>New Releases</h2>
+              <div className={styles.horizontalScroll}>
+                {newReleases.map((item) => (
+                  <div
+                    key={item.id}
+                    className={styles.contentCard}
+                    onClick={() => navigate('/details', { state: { item } })}
+                  >
+                    <img src={item.image} alt={item.title} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Comedies */}
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>Comedies</h2>
+              <div className={styles.horizontalScroll}>
+                {comedies.map((item) => (
+                  <div
+                    key={item.id}
+                    className={styles.contentCard}
+                    onClick={() => navigate('/details', { state: { item } })}
+                  >
+                    <img src={item.image} alt={item.title} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Dramas */}
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>Dramas</h2>
+              <div className={styles.horizontalScroll}>
+                {dramas.map((item) => (
+                  <div
+                    key={item.id}
+                    className={styles.contentCard}
+                    onClick={() => navigate('/details', { state: { item } })}
+                  >
+                    <img src={item.image} alt={item.title} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Action */}
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>Action & Adventure</h2>
+              <div className={styles.horizontalScroll}>
+                {action.map((item) => (
+                  <div
+                    key={item.id}
+                    className={styles.contentCard}
+                    onClick={() => navigate('/details', { state: { item } })}
+                  >
+                    <img src={item.image} alt={item.title} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Bottom Navigation Bar */}
