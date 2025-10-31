@@ -10,17 +10,18 @@
 }
 
 .header {
+  padding: 0.75rem 1rem 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
-  padding: 1rem 0 0.6rem;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .header h1 {
   font-size: 2.4rem;
   font-weight: 400;
-  margin: 0.4rem 0 0.6rem;
+  margin: 0;
 }
 
 .bottomNav {
