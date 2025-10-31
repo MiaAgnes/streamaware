@@ -41,8 +41,8 @@ export default function Search() {
     setShowPopup(false);
   };
 
-  // Combine and limit content for display
-  const allContent = [...movies, ...series].slice(0, 6);
+  // Combine all content for display
+  const allContent = [...movies, ...series];
 
   return (
     <div className={styles.container}>
@@ -55,7 +55,7 @@ export default function Search() {
         <div className={styles.searchBar} onClick={handleSearchClick}>
           <img src="/images/search-full.svg" alt="Search" className={styles.searchIcon} />
           <span className={styles.searchPlaceholder}>Search for movie or series..</span>
-          <img src="/images/help-icon.svg" alt="Filter" className={styles.filterIcon} />
+          <img src="/images/filter-icon.svg" alt="Filter" className={styles.filterIcon} />
         </div>
       </div>
 
