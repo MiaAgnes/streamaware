@@ -5,13 +5,15 @@ export default function FilterPopup({ isOpen, onClose, onApplyFilters }) {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState([]);
   const [selectedContentType, setSelectedContentType] = useState([]);
-  const [selectedCountries, setSelectedCountries] = useState([]);
+  const [selectedLanguages, setSelectedLanguages] = useState([]);
+  const [selectedSubtitles, setSelectedSubtitles] = useState([]);
 
   // Available filter options
   const genres = ['Action', 'Drama', 'Comedy', 'Thriller', 'Horror', 'Romance', 'Adventure', 'Sci-Fi', 'Fantasy', 'Animation'];
   const platforms = ['Netflix', 'HBO Max', 'Disney+', 'Amazon Prime', 'Apple TV+', 'Paramount+'];
   const contentTypes = ['Movies', 'Series'];
-  const countries = ['Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus', 'Belgium', 'Bosnia', 'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Georgia', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Italy', 'Kazakhstan', 'Kosovo', 'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Moldova', 'Monaco', 'Montenegro', 'Netherlands', 'North Macedonia', 'Norway', 'Poland', 'Portugal', 'Romania', 'San Marino', 'Serbia', 'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Turkey', 'Ukraine', 'United Kingdom', 'Vatican City'];
+  const languages = ['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Russian', 'Danish', 'Swedish', 'Norwegian'];
+  const subtitles = ['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Russian', 'Danish', 'Swedish', 'Norwegian'];
 
   // Prevent body scroll when popup is open
   useEffect(() => {
@@ -39,7 +41,8 @@ export default function FilterPopup({ isOpen, onClose, onApplyFilters }) {
       genres: selectedGenres,
       platforms: selectedPlatforms,
       contentType: selectedContentType,
-      countries: selectedCountries
+      languages: selectedLanguages,
+      subtitles: selectedSubtitles
     };
     
     if (onApplyFilters) {
@@ -118,17 +121,33 @@ export default function FilterPopup({ isOpen, onClose, onApplyFilters }) {
             </div>
           </div>
 
-          {/* Countries */}
+          {/* Languages */}
           <div className={styles.filterSection}>
-            <h3 className={styles.sectionTitle}>Countries</h3>
+            <h3 className={styles.sectionTitle}>Languages</h3>
             <div className={styles.filterGrid}>
-              {countries.map((country) => (
+              {languages.map((language) => (
                 <button
-                  key={country}
-                  className={`${styles.filterButton} ${selectedCountries.includes(country) ? styles.active : ''}`}
-                  onClick={() => toggleFilter(selectedCountries, setSelectedCountries, country)}
+                  key={language}
+                  className={`${styles.filterButton} ${selectedLanguages.includes(language) ? styles.active : ''}`}
+                  onClick={() => toggleFilter(selectedLanguages, setSelectedLanguages, language)}
                 >
-                  {country}
+                  {language}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Subtitles */}
+          <div className={styles.filterSection}>
+            <h3 className={styles.sectionTitle}>Subtitles</h3>
+            <div className={styles.filterGrid}>
+              {subtitles.map((subtitle) => (
+                <button
+                  key={subtitle}
+                  className={`${styles.filterButton} ${selectedSubtitles.includes(subtitle) ? styles.active : ''}`}
+                  onClick={() => toggleFilter(selectedSubtitles, setSelectedSubtitles, subtitle)}
+                >
+                  {subtitle}
                 </button>
               ))}
             </div>

@@ -68,13 +68,29 @@
   background: transparent;
   color: white;
   border: none;
-  font-size: 1.1rem;
+  font-size: 1rem;
   cursor: pointer;
-  transition: color 180ms ease;
+  transition: transform 0.2s ease;
   z-index: 3;
-  /* Make the arrow larger to better match the "Back" text */
   line-height: 1;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.back:active {
+  transform: scale(0.95);
+}
+
+.back svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.back span {
+  color: white;
 }
 
 .fav {

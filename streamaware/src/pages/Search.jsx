@@ -14,12 +14,6 @@ export default function Search() {
   const [movies, setMovies] = useState([]);
   const [series, setSeries] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeFilters, setActiveFilters] = useState({
-    genres: [],
-    platforms: [],
-    contentType: [],
-    countries: []
-  });
 
   // Load content on component mount
   useEffect(() => {
@@ -59,62 +53,13 @@ export default function Search() {
   };
 
   const handleApplyFilters = (filters) => {
-    setActiveFilters(filters);
+    // Navigate to FilterResults page with filters
+    navigate('/filter-results', { state: { filters } });
+    setShowFilterPopup(false);
   };
 
-  // Filter content based on active filters
-  const filterContent = (content) => {
-    return content.filter(item => {
-      // Check genres
-      if (activeFilters.genres.length > 0) {
-        const hasMatchingGenre = activeFilters.genres.some(filterGenre => 
-          item.genres && item.genres.some(itemGenre => 
-            itemGenre.toLowerCase().includes(filterGenre.toLowerCase())
-          )
-        );
-        if (!hasMatchingGenre) return false;
-      }
-
-      // Check platforms
-      if (activeFilters.platforms.length > 0) {
-        const hasMatchingPlatform = activeFilters.platforms.some(filterPlatform => 
-          item.platforms && item.platforms.some(itemPlatform => 
-            itemPlatform.toLowerCase().includes(filterPlatform.toLowerCase())
-          )
-        );
-        if (!hasMatchingPlatform) return false;
-      }
-
-      // Check content type
-      if (activeFilters.contentType.length > 0) {
-        const itemType = item.type || (item.seasons ? 'Series' : 'Movies');
-        const hasMatchingType = activeFilters.contentType.some(filterType => 
-          itemType.toLowerCase() === filterType.toLowerCase()
-        );
-        if (!hasMatchingType) return false;
-      }
-
-      // Check countries
-      if (activeFilters.countries.length > 0) {
-        const hasMatchingCountry = activeFilters.countries.some(filterCountry => 
-          item.country && (
-            Array.isArray(item.country) 
-              ? item.country.some(itemCountry => 
-                  itemCountry.toLowerCase().includes(filterCountry.toLowerCase())
-                )
-              : item.country.toLowerCase().includes(filterCountry.toLowerCase())
-          )
-        );
-        if (!hasMatchingCountry) return false;
-      }
-
-      return true;
-    });
-  };
-
-  // Combine and filter all content for display
+  // Combine all content for display
   const allContent = [...movies, ...series];
-  const filteredContent = filterContent(allContent);
 
   return (
     <div className={styles.container}>
@@ -142,7 +87,7 @@ export default function Search() {
           <div className={styles.loading}>Loading content...</div>
         ) : (
           <div className={styles.contentGrid}>
-            {filteredContent.map((item) => (
+            {allContent.map((item) => (
               <div
                 key={item.id}
                 className={styles.contentItem}

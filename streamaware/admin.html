@@ -217,9 +217,35 @@
         </div>
     </div>
 
+    <!-- Update Languages and Subtitles Section -->
+    <div class="container">
+        <h2>Update Languages and Subtitles</h2>
+        <div id="update-success" class="success"></div>
+        <div id="update-error" class="error"></div>
+        
+        <p style="color: rgba(255,255,255,0.8); margin-bottom: 20px;">
+            Add languages and subtitles to existing movies and series in your Firebase database.
+        </p>
+        
+        <div style="display: grid; gap: 15px;">
+            <button id="addSpecificLanguages" type="button" style="background-color: #836292; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; cursor: pointer;">
+                Add Specific Languages & Subtitles
+            </button>
+            <button id="addDefaultLanguages" type="button" style="background-color: #6B4C93; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 16px; cursor: pointer;">
+                Add Default Languages & Subtitles
+            </button>
+        </div>
+        
+        <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px; font-size: 14px;">
+            <strong>What these buttons do:</strong><br>
+            • <strong>Specific:</strong> Adds realistic languages and subtitles based on content origin (e.g., German for "Dark", Spanish for "Money Heist")<br>
+            • <strong>Default:</strong> Adds English language and Nordic subtitles to any remaining content without languages/subtitles
+        </div>
+    </div>
+
     <script type="module">
         // Import Firebase functions
-        import { addMovie, addSeries } from './src/firebase/firebaseData.js';
+        import { addMovie, addSeries, addLanguagesAndSubtitlesToContent, addDefaultLanguagesAndSubtitles } from './src/firebase/firebaseData.js';
         
         // Tab switching
         window.showTab = function(tab) {
@@ -320,6 +346,67 @@
             } catch (error) {
                 console.error('Error adding series:', error);
                 showMessage('error', `❌ Error adding series: ${error.message}`, 'series');
+            }
+        });
+
+        // Languages and Subtitles update handlers
+        document.getElementById('addSpecificLanguages').addEventListener('click', async () => {
+            try {
+                document.getElementById('update-success').style.display = 'none';
+                document.getElementById('update-error').style.display = 'none';
+                
+                // Show loading state
+                const button = document.getElementById('addSpecificLanguages');
+                const originalText = button.textContent;
+                button.textContent = 'Adding Languages & Subtitles...';
+                button.disabled = true;
+                
+                const updatedCount = await addLanguagesAndSubtitlesToContent();
+                
+                showMessage('success', `✅ Successfully updated ${updatedCount} items with specific languages and subtitles!`, 'update');
+                
+                // Reset button
+                button.textContent = originalText;
+                button.disabled = false;
+                
+            } catch (error) {
+                console.error('Error updating languages and subtitles:', error);
+                showMessage('error', `❌ Error updating content: ${error.message}`, 'update');
+                
+                // Reset button
+                const button = document.getElementById('addSpecificLanguages');
+                button.textContent = 'Add Specific Languages & Subtitles';
+                button.disabled = false;
+            }
+        });
+
+        document.getElementById('addDefaultLanguages').addEventListener('click', async () => {
+            try {
+                document.getElementById('update-success').style.display = 'none';
+                document.getElementById('update-error').style.display = 'none';
+                
+                // Show loading state
+                const button = document.getElementById('addDefaultLanguages');
+                const originalText = button.textContent;
+                button.textContent = 'Adding Default Data...';
+                button.disabled = true;
+                
+                const updatedCount = await addDefaultLanguagesAndSubtitles();
+                
+                showMessage('success', `✅ Successfully added default data to ${updatedCount} items!`, 'update');
+                
+                // Reset button
+                button.textContent = originalText;
+                button.disabled = false;
+                
+            } catch (error) {
+                console.error('Error adding default languages and subtitles:', error);
+                showMessage('error', `❌ Error adding default data: ${error.message}`, 'update');
+                
+                // Reset button
+                const button = document.getElementById('addDefaultLanguages');
+                button.textContent = 'Add Default Languages & Subtitles';
+                button.disabled = false;
             }
         });
     </script>

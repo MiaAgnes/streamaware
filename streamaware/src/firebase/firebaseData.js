@@ -6,7 +6,9 @@ import {
   query,
   where,
   orderBy,
-  limit
+  limit,
+  doc,
+  updateDoc
 } from "firebase/firestore";
 
 // 🎬 Movies and Series Data Management
@@ -214,6 +216,162 @@ export const getTrendingContent = async (limitCount = 10) => {
     return trending;
   } catch (error) {
     console.error("❌ Error loading trending content:", error);
+    throw error;
+  }
+};
+
+// Update existing movies and series with languages and subtitles
+export const addLanguagesAndSubtitlesToContent = async () => {
+  try {
+    console.log("🔄 Starting to add languages and subtitles to existing content...");
+    
+    // Sample languages and subtitles data for different content
+    const languageAndSubtitleData = {
+      // Popular US content
+      'Wednesday': {
+        languages: ['English'],
+        subtitles: ['English', 'Spanish', 'French', 'German', 'Danish', 'Swedish', 'Norwegian']
+      },
+      'Stranger Things': {
+        languages: ['English'],
+        subtitles: ['English', 'Spanish', 'French', 'German', 'Danish', 'Swedish', 'Norwegian']
+      },
+      'The Witcher': {
+        languages: ['English'],
+        subtitles: ['English', 'Spanish', 'French', 'German', 'Danish', 'Swedish', 'Norwegian']
+      },
+      'Breaking Bad': {
+        languages: ['English'],
+        subtitles: ['English', 'Spanish', 'French', 'German', 'Danish', 'Swedish', 'Norwegian']
+      },
+      'The Office': {
+        languages: ['English'],
+        subtitles: ['English', 'Spanish', 'French', 'German', 'Danish', 'Swedish', 'Norwegian']
+      },
+      'Avatar': {
+        languages: ['English'],
+        subtitles: ['English', 'Spanish', 'French', 'German', 'Danish', 'Swedish', 'Norwegian']
+      },
+      // European content
+      'Dark': {
+        languages: ['German'],
+        subtitles: ['English', 'Spanish', 'French', 'German', 'Danish', 'Swedish', 'Norwegian']
+      },
+      'Money Heist': {
+        languages: ['Spanish'],
+        subtitles: ['English', 'Spanish', 'French', 'German', 'Danish', 'Swedish', 'Norwegian']
+      },
+      'Elite': {
+        languages: ['Spanish'],
+        subtitles: ['English', 'Spanish', 'French', 'German', 'Danish', 'Swedish', 'Norwegian']
+      },
+      'Lupin': {
+        languages: ['French'],
+        subtitles: ['English', 'Spanish', 'French', 'German', 'Danish', 'Swedish', 'Norwegian']
+      },
+      // Nordic content
+      'The Bridge': {
+        languages: ['Danish', 'Swedish'],
+        subtitles: ['English', 'Danish', 'Swedish', 'Norwegian']
+      },
+      'Borgen': {
+        languages: ['Danish'],
+        subtitles: ['English', 'Danish', 'Swedish', 'Norwegian']
+      },
+      'Ragnarok': {
+        languages: ['Norwegian'],
+        subtitles: ['English', 'Danish', 'Swedish', 'Norwegian']
+      }
+    };
+
+    let updatedCount = 0;
+
+    // Update movies
+    const movies = await getAllMovies();
+    for (const movie of movies) {
+      const langData = languageAndSubtitleData[movie.title];
+      if (langData && (!movie.languages || !movie.subtitles)) {
+        const movieRef = doc(db, 'movies', movie.id);
+        await updateDoc(movieRef, {
+          languages: langData.languages,
+          subtitles: langData.subtitles,
+          updatedAt: new Date()
+        });
+        console.log(`✅ Updated movie: ${movie.title}`);
+        updatedCount++;
+      }
+    }
+
+    // Update series
+    const series = await getAllSeries();
+    for (const show of series) {
+      const langData = languageAndSubtitleData[show.title];
+      if (langData && (!show.languages || !show.subtitles)) {
+        const seriesRef = doc(db, 'series', show.id);
+        await updateDoc(seriesRef, {
+          languages: langData.languages,
+          subtitles: langData.subtitles,
+          updatedAt: new Date()
+        });
+        console.log(`✅ Updated series: ${show.title}`);
+        updatedCount++;
+      }
+    }
+
+    console.log(`✅ Successfully updated ${updatedCount} items with languages and subtitles!`);
+    return updatedCount;
+  } catch (error) {
+    console.error("❌ Error adding languages and subtitles:", error);
+    throw error;
+  }
+};
+
+// Add default languages and subtitles to content without specific data
+export const addDefaultLanguagesAndSubtitles = async () => {
+  try {
+    console.log("🔄 Adding default languages and subtitles to remaining content...");
+    
+    const defaultData = {
+      languages: ['English'],
+      subtitles: ['English', 'Danish', 'Swedish', 'Norwegian']
+    };
+
+    let updatedCount = 0;
+
+    // Update movies without languages/subtitles
+    const movies = await getAllMovies();
+    for (const movie of movies) {
+      if (!movie.languages || !movie.subtitles) {
+        const movieRef = doc(db, 'movies', movie.id);
+        await updateDoc(movieRef, {
+          languages: movie.languages || defaultData.languages,
+          subtitles: movie.subtitles || defaultData.subtitles,
+          updatedAt: new Date()
+        });
+        console.log(`✅ Added default data to movie: ${movie.title}`);
+        updatedCount++;
+      }
+    }
+
+    // Update series without languages/subtitles
+    const series = await getAllSeries();
+    for (const show of series) {
+      if (!show.languages || !show.subtitles) {
+        const seriesRef = doc(db, 'series', show.id);
+        await updateDoc(seriesRef, {
+          languages: show.languages || defaultData.languages,
+          subtitles: show.subtitles || defaultData.subtitles,
+          updatedAt: new Date()
+        });
+        console.log(`✅ Added default data to series: ${show.title}`);
+        updatedCount++;
+      }
+    }
+
+    console.log(`✅ Successfully added default data to ${updatedCount} items!`);
+    return updatedCount;
+  } catch (error) {
+    console.error("❌ Error adding default languages and subtitles:", error);
     throw error;
   }
 };
