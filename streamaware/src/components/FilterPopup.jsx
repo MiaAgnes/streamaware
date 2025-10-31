@@ -8,7 +8,7 @@ export default function FilterPopup({ isOpen, onClose, onApplyFilters }) {
   const [selectedCountries, setSelectedCountries] = useState([]);
 
   // Available filter options
-  const genres = ['Action', 'Drama', 'Comedy', 'Thriller', 'Horror', 'Romance', 'Adventure', 'Sci-Fi', 'Fantasy', 'Mystery'];
+  const genres = ['Action', 'Drama', 'Comedy', 'Thriller', 'Horror', 'Romance', 'Adventure', 'Sci-Fi', 'Fantasy', 'Animation'];
   const platforms = ['Netflix', 'HBO Max', 'Disney+', 'Amazon Prime', 'Apple TV+', 'Paramount+'];
   const contentTypes = ['Movies', 'Series'];
   const countries = ['Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus', 'Belgium', 'Bosnia', 'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Georgia', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Italy', 'Kazakhstan', 'Kosovo', 'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Moldova', 'Monaco', 'Montenegro', 'Netherlands', 'North Macedonia', 'Norway', 'Poland', 'Portugal', 'Romania', 'San Marino', 'Serbia', 'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Turkey', 'Ukraine', 'United Kingdom', 'Vatican City'];
