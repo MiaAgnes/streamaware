@@ -6,7 +6,6 @@ import BottomNav from '../components/BottomNav.jsx';
 import { getAllMovies, getAllSeries } from '../firebase/firebaseData';
 
 export default function Homepage() {
-  const [activeFilter, setActiveFilter] = useState(null);
   const [featuredContent, setFeaturedContent] = useState([]);
   const [recommended, setRecommended] = useState([]);
   const [mostSearched, setMostSearched] = useState([]);
@@ -18,7 +17,7 @@ export default function Homepage() {
   const [loading, setLoading] = useState(true);
   const carouselRef = useRef(null);
 
-  const filters = ['Movies', 'Series', 'Languages', 'Categories'];
+  const filters = ['Movies', 'Series'];
 
   const streamingServices = [
     { name: 'Netflix', logo: '/images/netflix.webp' },
@@ -198,8 +197,8 @@ export default function Homepage() {
         {filters.map((filter) => (
           <button
             key={filter}
-            className={`${styles.filterButton} ${activeFilter === filter ? styles.active : ''}`}
-            onClick={() => setActiveFilter(activeFilter === filter ? null : filter)}
+            className={styles.filterButton}
+            onClick={() => navigate('/content-type-results', { state: { contentType: filter } })}
           >
             {filter}
           </button>
