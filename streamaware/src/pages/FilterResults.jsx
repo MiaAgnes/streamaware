@@ -159,6 +159,9 @@ export default function FilterResults() {
                 />
                 <div className={styles.contentInfo}>
                   <h3 className={styles.contentTitle}>{item.title}</h3>
+                  <p className={styles.contentType}>
+                    {item.type || (item.seasons ? 'Series' : 'Movie')} • {item.year}
+                  </p>
                 </div>
               </div>
             ))}

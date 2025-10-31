@@ -7,6 +7,7 @@ import LogIn from './pages/LogIn.jsx'
 import Homepage from './pages/Homepage.jsx'
 import Search from './pages/Search.jsx'
 import FilterResults from './pages/FilterResults.jsx'
+import PlatformResults from './pages/PlatformResults.jsx'
 import Favorites from './pages/Favorites.jsx'
 import Profile from './pages/Profile.jsx'
 import DetailsScreen from './pages/DetailsScreen.jsx'
@@ -33,6 +34,7 @@ function App() {
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/search" element={<Search />} />
         <Route path="/filter-results" element={<FilterResults />} />
+        <Route path="/platform-results" element={<PlatformResults />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/details" element={<DetailsScreen />} />

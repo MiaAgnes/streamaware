@@ -170,6 +170,8 @@
   min-width: 0;
   box-sizing: border-box;
   position: relative;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .serviceCard:active {

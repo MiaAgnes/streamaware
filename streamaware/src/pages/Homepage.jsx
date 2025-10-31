@@ -232,7 +232,11 @@ export default function Homepage() {
               <h2 className={styles.sectionTitle}>Explore content from these services</h2>
               <div className={styles.servicesGrid}>
                 {streamingServices.map((service) => (
-                  <div key={service.name} className={styles.serviceCard}>
+                  <div 
+                    key={service.name} 
+                    className={styles.serviceCard}
+                    onClick={() => navigate('/platform-results', { state: { platform: service.name } })}
+                  >
                     <img 
                       src={service.logo} 
                       alt={service.name}
