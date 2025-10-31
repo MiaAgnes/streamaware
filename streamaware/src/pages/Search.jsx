@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { getAllMovies, getAllSeries } from '../firebase/firebaseData';
 import SearchPopup from '../components/SearchPopup';
+import FilterPopup from '../components/FilterPopup';
 import styles from './Search.module.css';
 import Logo from '../components/Logo.jsx';
 import BottomNav from '../components/BottomNav.jsx';
@@ -9,6 +10,7 @@ import BottomNav from '../components/BottomNav.jsx';
 export default function Search() {
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
+  const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [movies, setMovies] = useState([]);
   const [series, setSeries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +43,15 @@ export default function Search() {
     setShowPopup(false);
   };
 
+  const handleFilterClick = (e) => {
+    e.stopPropagation(); // Prevent the search popup from opening
+    setShowFilterPopup(true);
+  };
+
+  const handleCloseFilterPopup = () => {
+    setShowFilterPopup(false);
+  };
+
   // Combine all content for display
   const allContent = [...movies, ...series];
 
@@ -55,7 +66,12 @@ export default function Search() {
         <div className={styles.searchBar} onClick={handleSearchClick}>
           <img src="/images/search-full.svg" alt="Search" className={styles.searchIcon} />
           <span className={styles.searchPlaceholder}>Search for movie or series..</span>
-          <img src="/images/filter-icon.svg" alt="Filter" className={styles.filterIcon} />
+          <img 
+            src="/images/filter-icon.svg" 
+            alt="Filter" 
+            className={styles.filterIcon} 
+            onClick={handleFilterClick}
+          />
         </div>
       </div>
 
@@ -91,6 +107,9 @@ export default function Search() {
 
       {/* Search Popup */}
       <SearchPopup isOpen={showPopup} onClose={handleClosePopup} />
+      
+      {/* Filter Popup */}
+      <FilterPopup isOpen={showFilterPopup} onClose={handleCloseFilterPopup} />
       
       {/* Bottom Navigation Bar */}
       <BottomNav />
