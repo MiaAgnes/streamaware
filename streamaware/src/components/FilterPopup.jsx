@@ -34,13 +34,6 @@ export default function FilterPopup({ isOpen, onClose, onApplyFilters }) {
     }
   };
 
-  const clearAllFilters = () => {
-    setSelectedGenres([]);
-    setSelectedPlatforms([]);
-    setSelectedContentType([]);
-    setSelectedCountries([]);
-  };
-
   const applyFilters = () => {
     const filters = {
       genres: selectedGenres,
@@ -70,14 +63,9 @@ export default function FilterPopup({ isOpen, onClose, onApplyFilters }) {
             Cancel
           </button>
           <h2 className={styles.title}>Filters</h2>
-          <div className={styles.headerButtons}>
-            <button className={styles.clearButton} onClick={clearAllFilters}>
-              Clear All
-            </button>
             <button className={styles.applyButton} onClick={applyFilters}>
               Apply
             </button>
-          </div>
         </div>
 
         {/* Filter Content */}
