@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { getAllMovies, getAllSeries, filterContent } from '../firebase/firebaseData';
+import { getAllMovies, getAllSeries } from '../firebase/firebaseData';
 import SearchPopup from '../components/SearchPopup';
 import FilterPopup from '../components/FilterPopup';
 import styles from './Search.module.css';
@@ -11,10 +11,9 @@ export default function Search() {
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [showFilterPopup, setShowFilterPopup] = useState(false);
-  const [allContent, setAllContent] = useState([]);
-  const [filteredContent, setFilteredContent] = useState([]);
+  const [movies, setMovies] = useState([]);
+  const [series, setSeries] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeFilters, setActiveFilters] = useState({});
 
   // Load content on component mount
   useEffect(() => {
@@ -24,9 +23,8 @@ export default function Search() {
           getAllMovies(),
           getAllSeries()
         ]);
-        const combined = [...moviesData, ...seriesData];
-        setAllContent(combined);
-        setFilteredContent(combined); // Initially show all content
+        setMovies(moviesData);
+        setSeries(seriesData);
       } catch (error) {
         console.error('Error loading content:', error);
       } finally {
@@ -54,19 +52,8 @@ export default function Search() {
     setShowFilterPopup(false);
   };
 
-  const handleApplyFilters = async (filters) => {
-    setActiveFilters(filters);
-    try {
-      const filtered = await filterContent(filters);
-      setFilteredContent(filtered);
-    } catch (error) {
-      console.error('Error applying filters:', error);
-      setFilteredContent(allContent); // Fallback to all content
-    }
-  };
-
-  // Content to display (filtered or all)
-  const contentToDisplay = Object.keys(activeFilters).length > 0 ? filteredContent : allContent;
+  // Combine all content for display
+  const allContent = [...movies, ...series];
 
   return (
     <div className={styles.container}>
@@ -94,7 +81,7 @@ export default function Search() {
           <div className={styles.loading}>Loading content...</div>
         ) : (
           <div className={styles.contentGrid}>
-            {contentToDisplay.map((item) => (
+            {allContent.map((item) => (
               <div
                 key={item.id}
                 className={styles.contentItem}
@@ -114,11 +101,6 @@ export default function Search() {
                 </div>
               </div>
             ))}
-            {contentToDisplay.length === 0 && !loading && (
-              <div className={styles.noResults}>
-                No content matches your current filters.
-              </div>
-            )}
           </div>
         )}
       </div>
@@ -127,11 +109,7 @@ export default function Search() {
       <SearchPopup isOpen={showPopup} onClose={handleClosePopup} />
       
       {/* Filter Popup */}
-      <FilterPopup 
-        isOpen={showFilterPopup} 
-        onClose={handleCloseFilterPopup}
-        onApplyFilters={handleApplyFilters}
-      />
+      <FilterPopup isOpen={showFilterPopup} onClose={handleCloseFilterPopup} />
       
       {/* Bottom Navigation Bar */}
       <BottomNav />
