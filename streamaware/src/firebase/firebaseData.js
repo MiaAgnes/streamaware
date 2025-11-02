@@ -83,38 +83,86 @@ export const getSeriesByPlatform = async (platform) => {
   }
 };
 
-// Search movies and series
+// Search movies and series - progressive search that gets more specific with each letter
 export const searchContent = async (searchTerm) => {
   try {
-    const searchTermLower = searchTerm.toLowerCase();
+    console.log('🔍 Progressive search for:', searchTerm);
+    const searchTermLower = searchTerm.toLowerCase().trim();
     
-    // Search movies
-    const moviesCollection = collection(db, "movies");
-    const moviesSnapshot = await getDocs(moviesCollection);
-    const movies = moviesSnapshot.docs
-      .map(doc => ({ id: doc.id, ...doc.data(), type: 'movie' }))
-      .filter(movie => 
-        movie.title?.toLowerCase().includes(searchTermLower) ||
-        movie.description?.toLowerCase().includes(searchTermLower) ||
-        movie.genres?.some(genre => genre.toLowerCase().includes(searchTermLower))
-      );
+    // Return empty if no search term
+    if (!searchTermLower) {
+      return [];
+    }
+    
+    // Get all movies
+    const moviesRef = collection(db, "movies");
+    const moviesSnap = await getDocs(moviesRef);
+    
+    // Get all series  
+    const seriesRef = collection(db, "series");
+    const seriesSnap = await getDocs(seriesRef);
+    
+    // Process all content
+    const allContent = [];
+    
+    // Add movies
+    moviesSnap.docs.forEach(doc => {
+      const data = doc.data();
+      if (data.title) {
+        allContent.push({
+          id: doc.id,
+          type: 'movie',
+          title: data.title,
+          year: data.year || '',
+          image: data.image || '/images/placeholder.png',
+          description: data.description || '',
+          genres: data.genres || [],
+          platforms: data.platforms || [],
+          ...data
+        });
+      }
+    });
+    
+    // Add series
+    seriesSnap.docs.forEach(doc => {
+      const data = doc.data();
+      if (data.title) {
+        allContent.push({
+          id: doc.id,
+          type: 'series', 
+          title: data.title,
+          year: data.year || '',
+          image: data.image || '/images/placeholder.png',
+          description: data.description || '',
+          genres: data.genres || [],
+          platforms: data.platforms || [],
+          ...data
+        });
+      }
+    });
 
-    // Search series
-    const seriesCollection = collection(db, "series");
-    const seriesSnapshot = await getDocs(seriesCollection);
-    const series = seriesSnapshot.docs
-      .map(doc => ({ id: doc.id, ...doc.data(), type: 'series' }))
-      .filter(show => 
-        show.title?.toLowerCase().includes(searchTermLower) ||
-        show.description?.toLowerCase().includes(searchTermLower) ||
-        show.genres?.some(genre => genre.toLowerCase().includes(searchTermLower))
-      );
+    console.log('🎬 Total content items available:', allContent.length);
 
-    const results = [...movies, ...series];
-    console.log(`✅ Search results for "${searchTerm}":`, results.length);
+    // Progressive filtering: each letter makes the search more specific
+    const results = allContent.filter(item => {
+      const titleLower = item.title.toLowerCase();
+      // Must start with the exact search term (gets more specific with each letter)
+      return titleLower.startsWith(searchTermLower);
+    });
+
+    // Sort results alphabetically for consistent ordering
+    results.sort((a, b) => a.title.localeCompare(b.title));
+
+    console.log(`🎯 Progressive search results for "${searchTerm}":`, results.length);
+    
+    // Show which titles matched for debugging
+    if (results.length > 0) {
+      console.log('📋 Matching titles:', results.map(r => r.title));
+    }
+    
     return results;
   } catch (error) {
-    console.error(`❌ Error searching for "${searchTerm}":`, error);
+    console.error(`❌ Error in progressive search for "${searchTerm}":`, error);
     throw error;
   }
 };

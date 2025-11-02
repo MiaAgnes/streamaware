@@ -79,7 +79,9 @@ export default function SearchPopup({ isOpen, onClose }) {
 
     setIsLoading(true);
     try {
+      console.log('Searching for:', term);
       const results = await searchContent(term);
+      console.log('Search results received:', results);
       setSearchResults(results);
     } catch (error) {
       console.error('Search error:', error);
@@ -153,12 +155,30 @@ export default function SearchPopup({ isOpen, onClose }) {
           )}
           
           {!isLoading && searchResults.length === 0 && searchTerm && (
-            <div className={styles.noResults}>No results found</div>
+            <div className={styles.noResults}>
+              No results found for "{searchTerm}"
+              <br />
+              <small style={{opacity: 0.7, fontSize: '12px'}}>
+                Try typing the beginning of a movie or series title
+              </small>
+            </div>
           )}
           
           {!isLoading && searchResults.length > 0 && (
             <div className={styles.results}>
-              {searchResults.map((item) => (
+              <div style={{
+                color: 'white', 
+                padding: '10px 20px', 
+                fontSize: '14px', 
+                opacity: 0.8,
+                borderBottom: '1px solid rgba(255,255,255,0.1)',
+                marginBottom: '10px'
+              }}>
+                Found {searchResults.length} result(s) starting with "{searchTerm}"
+              </div>
+              {searchResults
+                .sort((a, b) => a.title.localeCompare(b.title))
+                .map((item) => (
                 <div
                   key={item.id}
                   className={styles.resultItem}

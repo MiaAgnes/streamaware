@@ -10,7 +10,7 @@ export default function FilterPopup({ isOpen, onClose, onApplyFilters }) {
 
   // Available filter options
   const genres = ['Action', 'Drama', 'Comedy', 'Thriller', 'Horror', 'Romance', 'Adventure', 'Sci-Fi', 'Fantasy', 'Animation'];
-  const platforms = ['Netflix', 'HBO Max', 'Disney+', 'Amazon Prime', 'Apple TV+', 'Paramount+'];
+  const platforms = ['Netflix', 'HBO Max', 'Disney+', 'Amazon Prime', 'Apple TV', 'Paramount+'];
   const contentTypes = ['Movies', 'Series'];
   const languages = ['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Russian', 'Danish', 'Swedish', 'Norwegian'];
   const subtitles = ['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Russian', 'Danish', 'Swedish', 'Norwegian'];
