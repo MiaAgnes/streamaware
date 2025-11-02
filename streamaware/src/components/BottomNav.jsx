@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
-import { getCurrentUser } from '../firebase/firebaseAuth';
+import { getCurrentUserData } from '../firebase/firebaseAuth';
 import styles from './BottomNav.module.css';
 import AuthRequiredPopup from './AuthRequiredPopup';
 
@@ -18,7 +18,7 @@ export default function BottomNav() {
     const loadUserProfileImage = async () => {
       if (!isGuestUser()) {
         try {
-          const user = await getCurrentUser();
+          const user = await getCurrentUserData();
           if (user && user.profileImage) {
             setUserProfileImage(`/images/${user.profileImage}`);
           }

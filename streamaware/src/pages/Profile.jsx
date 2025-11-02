@@ -4,6 +4,7 @@ import styles from './Profile.module.css';
 import ConfirmPopup from '../components/ConfirmPopup';
 import Button from '../components/Button';
 import ProfileImageSelector from '../components/ProfileImageSelector';
+import CountryPopup from '../components/CountryPopup';
 import { logoutUser, getCurrentUserData, updateUserProfileImage } from '../firebase/firebaseAuth.js';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import { auth, db } from '../firebase/firebase';
@@ -20,9 +21,18 @@ export default function Profile() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [userData, setUserData] = useState(null);
   const [showProfileImageSelector, setShowProfileImageSelector] = useState(false);
+  const [showCountryPopup, setShowCountryPopup] = useState(false);
+  const [guestCountry, setGuestCountry] = useState(null);
 
   useEffect(() => {
     setGuest(isGuestUser());
+    
+    // Load guest country from localStorage if guest
+    if (isGuestUser() && typeof window !== 'undefined' && window.localStorage) {
+      const savedGuestCountry = localStorage.getItem('guestCountry');
+      setGuestCountry(savedGuestCountry);
+    }
+    
     // If logged in, try to fetch profile info
     const uid = auth?.currentUser?.uid;
     if (uid) {
@@ -74,6 +84,25 @@ export default function Profile() {
     }
   };
 
+  const handleCountryChange = (selectedCountry) => {
+    console.log('Selected country:', selectedCountry);
+    
+    if (guest) {
+      // For guest users, save to localStorage and update state
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('guestCountry', selectedCountry);
+      }
+      setGuestCountry(selectedCountry);
+    } else {
+      // Update userData state to reflect the new country for authenticated users
+      if (userData) {
+        setUserData(prev => prev ? { ...prev, country: selectedCountry } : null);
+      }
+    }
+    
+    setShowCountryPopup(false);
+  };
+
   if (guest) {
     return (
       <div className={styles.container}>
@@ -85,9 +114,23 @@ export default function Profile() {
           <div className={styles.stackButtons}>
             <Button onClick={() => navigate('/signup')}>Sign Up</Button>
             <Button onClick={() => navigate('/login')}>Log In</Button>
-            <Button onClick={() => alert('Change country not implemented yet')}>Change country</Button>
+            <div className={styles.countryButtonWrapper}>
+              <Button onClick={() => setShowCountryPopup(true)}>Change country</Button>
+              <p className={styles.currentCountryText}>
+                Current country: {guestCountry || 'Not selected'}
+              </p>
+            </div>
           </div>
         </div>
+
+        {showCountryPopup && (
+          <CountryPopup
+            isOpen={showCountryPopup}
+            onClose={() => setShowCountryPopup(false)}
+            onSelect={handleCountryChange}
+            title="Change country"
+          />
+        )}
 
         {/* Bottom Navigation Bar */}
         <BottomNav />
@@ -112,7 +155,12 @@ export default function Profile() {
         
         <div className={styles.stackButtons}>
           <Button onClick={handleLogout}>Log out</Button>
-          <Button onClick={() => alert('Change country not implemented yet')}>Change country</Button>
+          <div className={styles.countryButtonWrapper}>
+            <Button onClick={() => setShowCountryPopup(true)}>Change country</Button>
+            <p className={styles.currentCountryText}>
+              Current country: {userData?.country || 'Not selected'}
+            </p>
+          </div>
           <Button onClick={() => setConfirmDelete(true)} className={styles.deleteButton}>Delete profile</Button>
         </div>
       </div>
@@ -135,6 +183,15 @@ export default function Profile() {
           currentImage={userData?.profileImage || '/images/cat-profile.svg'}
           onClose={() => setShowProfileImageSelector(false)}
           onSelect={handleProfileImageChange}
+        />
+      )}
+
+      {showCountryPopup && (
+        <CountryPopup
+          isOpen={showCountryPopup}
+          onClose={() => setShowCountryPopup(false)}
+          onSelect={handleCountryChange}
+          title="Change country"
         />
       )}
 
