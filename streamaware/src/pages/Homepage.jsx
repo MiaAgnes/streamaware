@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import styles from './Homepage.module.css';
 import Logo from '../components/Logo.jsx';
 import BottomNav from '../components/BottomNav.jsx';
-import { getAllMovies, getAllSeries } from '../firebase/firebaseData';
+import { getAllMovies, getAllSeries, getContentByGenre } from '../firebase/firebaseData';
 
 export default function Homepage() {
   const [featuredContent, setFeaturedContent] = useState([]);
@@ -33,58 +33,71 @@ export default function Homepage() {
     const loadFeaturedContent = async () => {
       try {
         setLoading(true);
-        const [movies, series] = await Promise.all([
+        const [movies, series, comedyContent, dramaContent, actionContent] = await Promise.all([
           getAllMovies(),
-          getAllSeries()
+          getAllSeries(),
+          getContentByGenre('Comedy'),
+          getContentByGenre('Drama'), 
+          getContentByGenre('Action')
         ]);
         
-        // Combine all content
+        // Combine all content for general sections
         const allContent = [...movies, ...series];
         
-        // Create sections by slicing content - each section gets 3 items
-        const featured = allContent.slice(0, 6).map(item => ({
+        // Shuffle array to get random distribution
+        const shuffledContent = [...allContent].sort(() => Math.random() - 0.5);
+        
+        // Distribute content across different sections without overlap
+        let currentIndex = 0;
+        const getNextItems = (count) => {
+          const items = shuffledContent.slice(currentIndex, currentIndex + count);
+          currentIndex += count;
+          return items.map(item => ({
+            id: item.id,
+            title: item.title,
+            image: item.image || item.posterUrl
+          }));
+        };
+        
+        // Featured content - first batch
+        const featured = getNextItems(Math.min(6, allContent.length));
+        
+        // Recommended - next batch
+        const recommendedItems = getNextItems(Math.min(6, allContent.length - currentIndex));
+        
+        // Most searched - next batch  
+        const mostSearchedItems = getNextItems(Math.min(6, allContent.length - currentIndex));
+        
+        // Trending - next batch
+        const trendingItems = getNextItems(Math.min(6, allContent.length - currentIndex));
+        
+        // New releases - filter for content from 2024 and newer
+        const newReleasesItems = allContent
+          .filter(item => {
+            // Check if item has releaseYear and it's 2024 or newer
+            const year = item.releaseYear || item.year || item.released;
+            return year && parseInt(year) >= 2024;
+          })
+          .map(item => ({
+            id: item.id,
+            title: item.title,
+            image: item.image || item.posterUrl
+          }));
+        
+        // Genre sections use actual Firebase genre data
+        const comedyItems = comedyContent.map(item => ({
           id: item.id,
           title: item.title,
           image: item.image || item.posterUrl
         }));
         
-        const recommendedItems = allContent.slice(6, 9).map(item => ({
+        const dramaItems = dramaContent.map(item => ({
           id: item.id,
           title: item.title,
           image: item.image || item.posterUrl
         }));
         
-        const mostSearchedItems = allContent.slice(9, 12).map(item => ({
-          id: item.id,
-          title: item.title,
-          image: item.image || item.posterUrl
-        }));
-        
-        const trendingItems = allContent.slice(12, 15).map(item => ({
-          id: item.id,
-          title: item.title,
-          image: item.image || item.posterUrl
-        }));
-        
-        const newReleasesItems = allContent.slice(15, 18).map(item => ({
-          id: item.id,
-          title: item.title,
-          image: item.image || item.posterUrl
-        }));
-        
-        const comedyItems = allContent.slice(18, 21).map(item => ({
-          id: item.id,
-          title: item.title,
-          image: item.image || item.posterUrl
-        }));
-        
-        const dramaItems = allContent.slice(21, 24).map(item => ({
-          id: item.id,
-          title: item.title,
-          image: item.image || item.posterUrl
-        }));
-        
-        const actionItems = allContent.slice(24, 27).map(item => ({
+        const actionItems = actionContent.map(item => ({
           id: item.id,
           title: item.title,
           image: item.image || item.posterUrl
