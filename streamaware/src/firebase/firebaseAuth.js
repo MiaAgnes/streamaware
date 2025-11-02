@@ -19,7 +19,8 @@ export const registerUser = async (email, password, username, country) => {
       username: username,
       email: email,
       country: country,
-      favorites: []
+      favorites: [],
+      profileImage: '/images/cat-profile.svg' // Default profile image
     });
 
     console.log("✅ Bruger oprettet:", user.uid);
@@ -132,6 +133,21 @@ export const getUserFavorites = async (userId) => {
     return userData?.favorites || [];
   } catch (error) {
     console.error("❌ Error loading user favorites:", error);
+    throw error;
+  }
+};
+
+// Update user profile image
+export const updateUserProfileImage = async (userId, profileImagePath) => {
+  try {
+    const userDoc = doc(db, "users", userId);
+    await updateDoc(userDoc, {
+      profileImage: profileImagePath
+    });
+    console.log("✅ Profile image updated:", profileImagePath);
+    return true;
+  } catch (error) {
+    console.error("❌ Error updating profile image:", error);
     throw error;
   }
 };

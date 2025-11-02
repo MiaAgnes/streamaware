@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import styles from './Profile.module.css';
 import ConfirmPopup from '../components/ConfirmPopup';
 import Button from '../components/Button';
-import { logoutUser, getCurrentUserData } from '../firebase/firebaseAuth.js';
+import ProfileImageSelector from '../components/ProfileImageSelector';
+import { logoutUser, getCurrentUserData, updateUserProfileImage } from '../firebase/firebaseAuth.js';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import { auth, db } from '../firebase/firebase';
 import { deleteDoc, doc } from 'firebase/firestore';
@@ -18,6 +19,7 @@ export default function Profile() {
   const [guest, setGuest] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [showProfileImageSelector, setShowProfileImageSelector] = useState(false);
 
   useEffect(() => {
     setGuest(isGuestUser());
@@ -56,6 +58,22 @@ export default function Profile() {
     }
   };
 
+    const handleProfileImageChange = async (newImagePath) => {
+    try {
+      await updateUserProfileImage(newImagePath);
+      // Update the userData state to reflect the new profile image
+      setUserData(prev => prev ? { ...prev, profileImage: newImagePath } : null);
+      setShowProfileImageSelector(false);
+      
+      // Dispatch custom event to update BottomNav
+      window.dispatchEvent(new CustomEvent('profileImageUpdated', {
+        detail: { profileImage: newImagePath }
+      }));
+    } catch (error) {
+      console.error('Error updating profile image:', error);
+    }
+  };
+
   if (guest) {
     return (
       <div className={styles.container}>
@@ -80,11 +98,22 @@ export default function Profile() {
   return (
     <div className={styles.container}>
         <div className={styles.main}>
-        <h1>Hi {userData?.username || auth.currentUser?.displayName}</h1>
+        <h1 className={styles.greeting}>Hi {userData?.username || auth.currentUser?.displayName}</h1>
+        
+        {/* Profile Image */}
+        <div className={styles.profileImageContainer}>
+          <img 
+            src={userData?.profileImage || '/images/cat-profile.svg'} 
+            alt="Profile" 
+            className={styles.profileImage}
+            onClick={() => setShowProfileImageSelector(true)}
+          />
+        </div>
+        
         <div className={styles.stackButtons}>
           <Button onClick={handleLogout}>Log out</Button>
-          <Button onClick={() => setConfirmDelete(true)}>Delete profile</Button>
           <Button onClick={() => alert('Change country not implemented yet')}>Change country</Button>
+          <Button onClick={() => setConfirmDelete(true)} className={styles.deleteButton}>Delete profile</Button>
         </div>
       </div>
 
@@ -97,6 +126,15 @@ export default function Profile() {
           onCancel={() => setConfirmDelete(false)}
           confirmText="Delete"
           cancelText="Cancel"
+        />
+      )}
+
+      {showProfileImageSelector && (
+        <ProfileImageSelector
+          isOpen={showProfileImageSelector}
+          currentImage={userData?.profileImage || '/images/cat-profile.svg'}
+          onClose={() => setShowProfileImageSelector(false)}
+          onSelect={handleProfileImageChange}
         />
       )}
 

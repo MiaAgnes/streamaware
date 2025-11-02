@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
+import { getCurrentUser } from '../firebase/firebaseAuth';
 import styles from './BottomNav.module.css';
 import AuthRequiredPopup from './AuthRequiredPopup';
 
@@ -11,6 +12,35 @@ export default function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
   const [showAuthPopup, setShowAuthPopup] = useState(false);
+  const [userProfileImage, setUserProfileImage] = useState('/images/profile-opacity.svg');
+
+  useEffect(() => {
+    const loadUserProfileImage = async () => {
+      if (!isGuestUser()) {
+        try {
+          const user = await getCurrentUser();
+          if (user && user.profileImage) {
+            setUserProfileImage(`/images/${user.profileImage}`);
+          }
+        } catch (error) {
+          console.error('Error loading user profile image:', error);
+        }
+      }
+    };
+
+    loadUserProfileImage();
+
+    // Listen for profile image updates
+    const handleProfileImageUpdate = (event) => {
+      setUserProfileImage(`/images/${event.detail.profileImage}`);
+    };
+
+    window.addEventListener('profileImageUpdated', handleProfileImageUpdate);
+
+    return () => {
+      window.removeEventListener('profileImageUpdated', handleProfileImageUpdate);
+    };
+  }, []);
 
   const handleNav = (path) => {
     if (path === '/favorites' && isGuestUser()) {
@@ -37,7 +67,15 @@ export default function BottomNav() {
           <img src={location.pathname === '/favorites' ? '/images/heart-full.svg' : '/images/heart-opacity.svg'} alt="Favorites" />
         </button>
         <button className={styles.navButton} onClick={() => handleNav('/profile')}>
-          <img src={location.pathname === '/profile' ? '/images/profile-full.svg' : '/images/profile-opacity.svg'} alt="Profile" />
+          {!isGuestUser() ? (
+            <img 
+              src={userProfileImage} 
+              alt="Profile" 
+              className={location.pathname === '/profile' ? styles.profileImageActive : styles.profileImage}
+            />
+          ) : (
+            <img src={location.pathname === '/profile' ? '/images/profile-full.svg' : '/images/profile-opacity.svg'} alt="Profile" />
+          )}
         </button>
       </nav>
 

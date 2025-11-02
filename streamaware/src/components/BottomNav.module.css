@@ -33,3 +33,20 @@
   width: 1.65rem;
   height: 1.65rem;
 }
+
+.profileImage {
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0.6;
+}
+
+.profileImageActive {
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 1;
+  border: 2px solid #fff;
+}
