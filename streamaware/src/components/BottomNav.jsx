@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { getCurrentUserData } from '../firebase/firebaseAuth';
+import { auth } from '../firebase/firebase';
 import styles from './BottomNav.module.css';
 import AuthRequiredPopup from './AuthRequiredPopup';
 
@@ -18,9 +19,12 @@ export default function BottomNav() {
     const loadUserProfileImage = async () => {
       if (!isGuestUser()) {
         try {
-          const user = await getCurrentUserData();
-          if (user && user.profileImage) {
-            setUserProfileImage(`/images/${user.profileImage}`);
+          const userId = auth?.currentUser?.uid;
+          if (userId) {
+            const user = await getCurrentUserData(userId);
+            if (user && user.profileImage) {
+              setUserProfileImage(user.profileImage);
+            }
           }
         } catch (error) {
           console.error('Error loading user profile image:', error);
@@ -32,7 +36,7 @@ export default function BottomNav() {
 
     // Listen for profile image updates
     const handleProfileImageUpdate = (event) => {
-      setUserProfileImage(`/images/${event.detail.profileImage}`);
+      setUserProfileImage(event.detail.profileImage);
     };
 
     window.addEventListener('profileImageUpdated', handleProfileImageUpdate);

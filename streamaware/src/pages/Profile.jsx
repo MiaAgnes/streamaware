@@ -70,7 +70,13 @@ export default function Profile() {
 
     const handleProfileImageChange = async (newImagePath) => {
     try {
-      await updateUserProfileImage(newImagePath);
+      const userId = auth?.currentUser?.uid;
+      if (!userId) {
+        console.error('No user logged in');
+        return;
+      }
+      
+      await updateUserProfileImage(userId, newImagePath);
       // Update the userData state to reflect the new profile image
       setUserData(prev => prev ? { ...prev, profileImage: newImagePath } : null);
       setShowProfileImageSelector(false);
