@@ -23,7 +23,7 @@ export default function Homepage() {
     { name: 'Netflix', logo: '/images/netflix.webp' },
     { name: 'Prime Video', logo: '/images/primevideo.svg' },
     { name: 'Disney+', logo: '/images/disneyplus.svg' },
-    { name: 'HBO Max', logo: '/images/hbomax.png' },
+    { name: 'HBO Max', logo: '/images/hbomax.webp' },
     { name: 'Viaplay', logo: '/images/viaplay.webp' },
     { name: 'Apple TV', logo: '/images/apple-tv.webp' }
   ];

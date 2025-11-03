@@ -156,7 +156,7 @@
 }
 
 .serviceCard {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--service-bg, rgba(255, 255, 255, 0.1));
   border-radius: 0.5rem;
   padding: 1.25rem 0.75rem;
   display: flex;
@@ -172,6 +172,26 @@
   position: relative;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Gradient backgrounds for service cards */
+.servicesGrid .serviceCard:nth-child(1) {
+  background: linear-gradient(135deg, #000000 0%, #000000 100%);
+}
+.servicesGrid .serviceCard:nth-child(2) {
+  background: linear-gradient(180deg, #032963 0%, #19B5E4 100%);
+}
+.servicesGrid .serviceCard:nth-child(3) {
+  background: linear-gradient(180deg, #060728 0%, #1449A3 100%);
+}
+.servicesGrid .serviceCard:nth-child(4) {
+  background: linear-gradient(180deg, #313131 0%, #030303 100%);
+}
+.servicesGrid .serviceCard:nth-child(5) {
+  background: linear-gradient(180deg, #FFFFFF 0%, #DFDFDF 100%);
+}
+.servicesGrid .serviceCard:nth-child(6) {
+  background: linear-gradient(180deg, #000000 0%, #1d1d1d 100%);
 }
 
 .serviceCard:active {

@@ -11,9 +11,7 @@ import {
   updateDoc
 } from "firebase/firestore";
 
-// 🎬 Movies and Series Data Management
 
-// Get all movies
 export const getAllMovies = async () => {
   try {
     const moviesCollection = collection(db, "movies");
@@ -30,7 +28,6 @@ export const getAllMovies = async () => {
   }
 };
 
-// Get all series
 export const getAllSeries = async () => {
   try {
     const seriesCollection = collection(db, "series");
@@ -47,7 +44,6 @@ export const getAllSeries = async () => {
   }
 };
 
-// Get movies by platform
 export const getMoviesByPlatform = async (platform) => {
   try {
     const moviesCollection = collection(db, "movies");
@@ -65,7 +61,7 @@ export const getMoviesByPlatform = async (platform) => {
   }
 };
 
-// Get series by platform
+
 export const getSeriesByPlatform = async (platform) => {
   try {
     const seriesCollection = collection(db, "series");
@@ -83,29 +79,29 @@ export const getSeriesByPlatform = async (platform) => {
   }
 };
 
-// Search movies and series - progressive search that gets more specific with each letter
+
 export const searchContent = async (searchTerm) => {
   try {
     console.log('🔍 Progressive search for:', searchTerm);
     const searchTermLower = searchTerm.toLowerCase().trim();
     
-    // Return empty if no search term
+
     if (!searchTermLower) {
       return [];
     }
     
-    // Get all movies
+
     const moviesRef = collection(db, "movies");
     const moviesSnap = await getDocs(moviesRef);
     
-    // Get all series  
+
     const seriesRef = collection(db, "series");
     const seriesSnap = await getDocs(seriesRef);
     
-    // Process all content
+
     const allContent = [];
     
-    // Add movies
+
     moviesSnap.docs.forEach(doc => {
       const data = doc.data();
       if (data.title) {
@@ -123,7 +119,7 @@ export const searchContent = async (searchTerm) => {
       }
     });
     
-    // Add series
+
     seriesSnap.docs.forEach(doc => {
       const data = doc.data();
       if (data.title) {
@@ -143,19 +139,19 @@ export const searchContent = async (searchTerm) => {
 
     console.log('🎬 Total content items available:', allContent.length);
 
-    // Progressive filtering: each letter makes the search more specific
+  
     const results = allContent.filter(item => {
       const titleLower = item.title.toLowerCase();
-      // Must start with the exact search term (gets more specific with each letter)
+   
       return titleLower.startsWith(searchTermLower);
     });
 
-    // Sort results alphabetically for consistent ordering
+
     results.sort((a, b) => a.title.localeCompare(b.title));
 
     console.log(`🎯 Progressive search results for "${searchTerm}":`, results.length);
     
-    // Show which titles matched for debugging
+
     if (results.length > 0) {
       console.log('📋 Matching titles:', results.map(r => r.title));
     }
@@ -167,10 +163,10 @@ export const searchContent = async (searchTerm) => {
   }
 };
 
-// Get content by genre
+
 export const getContentByGenre = async (genre) => {
   try {
-    // Get movies by genre
+
     const moviesCollection = collection(db, "movies");
     const moviesQuery = query(moviesCollection, where("genres", "array-contains", genre));
     const moviesSnapshot = await getDocs(moviesQuery);
@@ -180,7 +176,7 @@ export const getContentByGenre = async (genre) => {
       type: 'movie'
     }));
 
-    // Get series by genre
+   
     const seriesCollection = collection(db, "series");
     const seriesQuery = query(seriesCollection, where("genres", "array-contains", genre));
     const seriesSnapshot = await getDocs(seriesQuery);
@@ -199,7 +195,7 @@ export const getContentByGenre = async (genre) => {
   }
 };
 
-// Add a new movie
+
 export const addMovie = async (movieData) => {
   try {
     const moviesCollection = collection(db, "movies");
@@ -216,7 +212,7 @@ export const addMovie = async (movieData) => {
   }
 };
 
-// Add a new series
+
 export const addSeries = async (seriesData) => {
   try {
     const seriesCollection = collection(db, "series");
@@ -233,10 +229,10 @@ export const addSeries = async (seriesData) => {
   }
 };
 
-// Get trending/popular content (example implementation)
+
 export const getTrendingContent = async (limitCount = 10) => {
   try {
-    // Get popular movies (you could sort by rating, views, etc.)
+
     const moviesCollection = collection(db, "movies");
     const moviesQuery = query(moviesCollection, orderBy("rating", "desc"), limit(limitCount));
     const moviesSnapshot = await getDocs(moviesQuery);
@@ -246,7 +242,7 @@ export const getTrendingContent = async (limitCount = 10) => {
       type: 'movie'
     }));
 
-    // Get popular series
+
     const seriesCollection = collection(db, "series");
     const seriesQuery = query(seriesCollection, orderBy("rating", "desc"), limit(limitCount));
     const seriesSnapshot = await getDocs(seriesQuery);
@@ -268,7 +264,7 @@ export const getTrendingContent = async (limitCount = 10) => {
   }
 };
 
-// Update existing movies and series with languages and subtitles
+
 export const addLanguagesAndSubtitlesToContent = async () => {
   try {
     console.log("🔄 Starting to add languages and subtitles to existing content...");
@@ -334,7 +330,7 @@ export const addLanguagesAndSubtitlesToContent = async () => {
 
     let updatedCount = 0;
 
-    // Update movies
+
     const movies = await getAllMovies();
     for (const movie of movies) {
       const langData = languageAndSubtitleData[movie.title];
@@ -350,7 +346,7 @@ export const addLanguagesAndSubtitlesToContent = async () => {
       }
     }
 
-    // Update series
+
     const series = await getAllSeries();
     for (const show of series) {
       const langData = languageAndSubtitleData[show.title];
