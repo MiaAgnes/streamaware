@@ -5,7 +5,7 @@ import ConfirmPopup from '../components/ConfirmPopup';
 import Button from '../components/Button';
 import ProfileImageSelector from '../components/ProfileImageSelector';
 import CountryPopup from '../components/CountryPopup';
-import { logoutUser, getCurrentUserData, updateUserProfileImage } from '../firebase/firebaseAuth.js';
+import { logoutUser, getCurrentUserData, updateUserProfileImage, updateUserCountry } from '../firebase/firebaseAuth.js';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import { auth, db } from '../firebase/firebase';
 import { deleteDoc, doc } from 'firebase/firestore';
@@ -90,7 +90,7 @@ export default function Profile() {
     }
   };
 
-  const handleCountryChange = (selectedCountry) => {
+  const handleCountryChange = async (selectedCountry) => {
     console.log('Selected country:', selectedCountry);
     
     if (guest) {
@@ -100,9 +100,19 @@ export default function Profile() {
       }
       setGuestCountry(selectedCountry);
     } else {
-      // Update userData state to reflect the new country for authenticated users
-      if (userData) {
-        setUserData(prev => prev ? { ...prev, country: selectedCountry } : null);
+      // For authenticated users, save to Firestore
+      try {
+        const userId = auth?.currentUser?.uid;
+        if (userId) {
+          await updateUserCountry(userId, selectedCountry);
+          // Update userData state to reflect the new country
+          setUserData(prev => prev ? { ...prev, country: selectedCountry } : null);
+          console.log('✅ Country updated successfully');
+        }
+      } catch (error) {
+        console.error('❌ Error updating country:', error);
+        alert('Failed to update country. Please try again.');
+        return; // Don't close popup if there was an error
       }
     }
     

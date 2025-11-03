@@ -152,6 +152,21 @@ export const updateUserProfileImage = async (userId, profileImagePath) => {
   }
 };
 
+// Update user's country in Firestore
+export const updateUserCountry = async (userId, country) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+    await updateDoc(userDocRef, {
+      country: country,
+      updatedAt: new Date()
+    });
+    console.log('✅ User country updated successfully');
+  } catch (error) {
+    console.error('❌ Error updating user country:', error);
+    throw error;
+  }
+};
+
 // Listen to auth state changes
 export const onAuthStateChange = (callback) => {
   return onAuthStateChanged(auth, callback);
