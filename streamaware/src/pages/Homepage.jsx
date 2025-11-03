@@ -47,6 +47,17 @@ export default function Homepage() {
         // Shuffle array to get random distribution
         const shuffledContent = [...allContent].sort(() => Math.random() - 0.5);
         
+        // Ensure we have enough content for all sections
+        const minRequiredContent = 46; // 6 featured + 10 each for recommended, most searched, trending
+        if (shuffledContent.length < minRequiredContent) {
+          // If not enough content, duplicate and shuffle again
+          const duplicatedContent = [];
+          while (duplicatedContent.length < minRequiredContent) {
+            duplicatedContent.push(...shuffledContent);
+          }
+          shuffledContent.splice(0, shuffledContent.length, ...duplicatedContent.sort(() => Math.random() - 0.5));
+        }
+        
         // Distribute content across different sections without overlap
         let currentIndex = 0;
         const getNextItems = (count) => {
@@ -58,14 +69,14 @@ export default function Homepage() {
         // Featured content - first batch (keep full data)
         const featured = getNextItems(Math.min(6, allContent.length));
         
-        // Recommended - next batch (keep full data)
-        const recommendedItems = getNextItems(Math.min(6, allContent.length - currentIndex));
+        // Recommended - next batch with exactly 10 items (keep full data)
+        const recommendedItems = getNextItems(10);
         
-        // Most searched - next batch (keep full data)
-        const mostSearchedItems = getNextItems(Math.min(6, allContent.length - currentIndex));
+        // Most searched - next batch with exactly 10 items (keep full data)
+        const mostSearchedItems = getNextItems(10);
         
-        // Trending - next batch (keep full data)
-        const trendingItems = getNextItems(Math.min(6, allContent.length - currentIndex));
+        // Trending - next batch with exactly 10 items (keep full data)
+        const trendingItems = getNextItems(10);
         
         // New releases - filter for content from 2024 and newer (keep full data)
         const newReleasesItems = allContent
