@@ -177,7 +177,7 @@ export default function DetailsScreen() {
                 'disney plus': '/images/disneyplus.svg',
                 'hbo max': '/images/hbomax.webp',
                 'hbo': '/images/hbomax.webp',
-                'viaplay': '/images/viaplay.webp',
+                'viaplay': '/images/viaplay-white.webp',
                 'apple tv': '/images/apple-tv.webp',
                 'apple tv+': '/images/apple-tv.webp',
                 'paramount+': '/images/paramount-plus.webp',
@@ -197,7 +197,11 @@ export default function DetailsScreen() {
                     <div className={styles.serviceLeft}>
                       <div className={styles.logoWrap}>
                         {logoUrl ? (
-                          <img src={logoUrl} alt={platformName} className={styles.platformLogo} />
+                          <img 
+                            src={logoUrl} 
+                            alt={platformName} 
+                            className={styles.platformLogo}
+                          />
                         ) : (
                           <div className={styles.logoPlaceholder}>
                             {platformName[0]?.toUpperCase() || 'P'}
