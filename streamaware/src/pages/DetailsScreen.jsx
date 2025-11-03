@@ -180,8 +180,15 @@ export default function DetailsScreen() {
                 'viaplay': '/images/viaplay-white.webp',
                 'apple tv': '/images/apple-tv.webp',
                 'apple tv+': '/images/apple-tv.webp',
-                'paramount+': '/images/paramount-plus.webp',
-                'paramount plus': '/images/paramount-plus.webp'
+                'skyshowtime': 'https://d21buns5ku92am.cloudfront.net/69678/background_image/large-1734104572.png',
+                'yousee play': 'https://www.flatpanels.dk/pictures/youseeplay2022_4.jpg',
+                'blockbuster': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Blockbuster_logo.svg/2560px-Blockbuster_logo.svg.png',
+                'google play': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Google_Play_2012-2016_icon.svg/1921px-Google_Play_2012-2016_icon.svg.png',
+                'filmstriben': 'https://play-lh.googleusercontent.com/U6R-EOFB6iPfrES9gMIpu9Iwm1RHYt4g_WyOiGoqFGFw01vLt6BuPBwG3v2WaoiLOnA',
+                'youtube': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/2560px-YouTube_full-color_icon_%282017%29.svg.png',
+                'sf anytime': 'https://img-cdn.sfanytime.com/APP/LOGO_HORIZ_SF_587bf34c3e68af3b0577acbddac02d77.svg?bg=141414&fill-color=141414&pad=171&h=512&w=910&fit=fill&fm=svg&s=302e546fa8511684046dc2cbe68a39ef',
+                'dr': 'https://storage.tweak.dk/smart%20home/Et_kig_p%C3%A5_DR_TV_anno_2020/Et_kig_p%C3%A5_DR_TV_anno_2020_.jpg',
+                'tv2 play': 'https://cdn-play-prismic.tv2i.dk/playlandingpages/96cabc75-acf2-47c0-bbe4-24b140d0d5ee_Web+Channels-4.png?auto=compress,format',
               };
               
               return logoMap[name] || null;
