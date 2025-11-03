@@ -52,56 +52,32 @@ export default function Homepage() {
         const getNextItems = (count) => {
           const items = shuffledContent.slice(currentIndex, currentIndex + count);
           currentIndex += count;
-          return items.map(item => ({
-            id: item.id,
-            title: item.title,
-            image: item.image || item.posterUrl
-          }));
+          return items; // Return full items, not just id, title, image
         };
         
-        // Featured content - first batch
+        // Featured content - first batch (keep full data)
         const featured = getNextItems(Math.min(6, allContent.length));
         
-        // Recommended - next batch
+        // Recommended - next batch (keep full data)
         const recommendedItems = getNextItems(Math.min(6, allContent.length - currentIndex));
         
-        // Most searched - next batch  
+        // Most searched - next batch (keep full data)
         const mostSearchedItems = getNextItems(Math.min(6, allContent.length - currentIndex));
         
-        // Trending - next batch
+        // Trending - next batch (keep full data)
         const trendingItems = getNextItems(Math.min(6, allContent.length - currentIndex));
         
-        // New releases - filter for content from 2024 and newer
+        // New releases - filter for content from 2024 and newer (keep full data)
         const newReleasesItems = allContent
           .filter(item => {
-            // Check if item has releaseYear and it's 2024 or newer
             const year = item.releaseYear || item.year || item.released;
             return year && parseInt(year) >= 2024;
-          })
-          .map(item => ({
-            id: item.id,
-            title: item.title,
-            image: item.image || item.posterUrl
-          }));
+          });
         
-        // Genre sections use actual Firebase genre data
-        const comedyItems = comedyContent.map(item => ({
-          id: item.id,
-          title: item.title,
-          image: item.image || item.posterUrl
-        }));
-        
-        const dramaItems = dramaContent.map(item => ({
-          id: item.id,
-          title: item.title,
-          image: item.image || item.posterUrl
-        }));
-        
-        const actionItems = actionContent.map(item => ({
-          id: item.id,
-          title: item.title,
-          image: item.image || item.posterUrl
-        }));
+        // Genre sections use actual Firebase genre data (keep full data)
+        const comedyItems = comedyContent;
+        const dramaItems = dramaContent;
+        const actionItems = actionContent;
         
         setFeaturedContent(featured);
         setRecommended(recommendedItems);

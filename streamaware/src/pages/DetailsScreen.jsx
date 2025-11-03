@@ -2,21 +2,6 @@ import { useNavigate, useLocation } from 'react-router';
 import styles from './DetailsScreen.module.css';
 import Button from '../components/Button';
 import BottomNav from '../components/BottomNav.jsx';
-
-const SAMPLE = {
-  title: 'Wednesday',
-  year: '2022',
-  type: 'Serie',
-  genre: 'Thriller',
-  description:
-    'Clever, sarcastic, and a little dead inside, Wednesday Addams investigates twisted mysteries while making new friends – and enemies – at Nevermore Academy.',
-  // use existing assets in public/images
-  hero: '/images/wednesday.png',
-  services: [
-    { id: 'netflix', name: 'Netflix', price: 'DKK 89.00 / month', logo: '/images/netflix.webp' },
-    { id: 'prime', name: 'Prime video', price: 'DKK 69.00 / month', logo: '/images/primevideo.svg' }
-  ]
-};
 import { useEffect, useState } from 'react';
 import AuthRequiredPopup from '../components/AuthRequiredPopup';
 import { addToFavorites, removeFromFavorites, getUserFavorites } from '../firebase/firebaseAuth.js';
@@ -25,20 +10,27 @@ import { auth } from '../firebase/firebase';
 export default function DetailsScreen() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  let raw = state?.item || {};
+  const item = state?.item;
 
-  // Ensure we have all required fields even if navigation passed a minimal item
-  const item = {
-    title: raw.title || SAMPLE.title,
-    year: raw.year || SAMPLE.year,
-    type: raw.type || SAMPLE.type,
-    genre: raw.genre || SAMPLE.genre,
-    description: raw.description || SAMPLE.description,
-    // prefer explicit hero, then an 'image' prop from previews, then SAMPLE
-    hero: raw.hero || raw.image || SAMPLE.hero,
-    services: raw.services || SAMPLE.services,
-    id: raw?.id || SAMPLE.title
-  };
+  // Redirect if no item data
+  if (!item) {
+    console.warn('No item data found, redirecting to search');
+    navigate('/search');
+    return null;
+  }
+
+  // Debug: Log the item data to see what fields we have
+  console.log('DetailsScreen item data:', item);
+  console.log('Item keys:', Object.keys(item));
+  console.log('Item details:', {
+    title: item.title,
+    type: item.type, 
+    year: item.year,
+    description: item.description,
+    genres: item.genres,
+    platforms: item.platforms,
+    image: item.image
+  });
 
   // guest detection helper
   function isGuestUser() {
@@ -69,7 +61,7 @@ export default function DetailsScreen() {
     <div className={styles.container}>
       <div
         className={styles.hero}
-        style={{ backgroundImage: `url(${item.hero || '/images/hero-placeholder.png'})` }}
+        style={{ backgroundImage: `url(${item.image || '/images/hero-placeholder.png'})` }}
       >
         <button className={styles.back} onClick={() => navigate(-1)}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -143,31 +135,101 @@ export default function DetailsScreen() {
       )}
 
       <div className={styles.body}>
-        <h1 className={styles.title}>{item.title}</h1>
+        <h1 className={styles.title}>{item?.title || 'Unknown Title'}</h1>
 
         <div className={styles.pills}>
-          <span className={styles.pill}>{item.year}</span>
-          <span className={styles.pill}>{item.type}</span>
-          <span className={styles.pill}>{item.genre}</span>
+          <span className={styles.pill}>{item?.year || 'Unknown Year'}</span>
+          <span className={styles.pill}>{item?.type === 'movie' ? 'Movie' : item?.type === 'series' ? 'Series' : 'Content'}</span>
+          {item?.genres && Array.isArray(item.genres) && item.genres.length > 0 && (
+            <span className={styles.pill}>{item.genres[0]}</span>
+          )}
         </div>
 
-        <p className={styles.description}>{item.description}</p>
+        <p className={styles.description}>{item?.description || 'No description available.'}</p>
 
         <div className={styles.services}>
-          {item.services.map(s => (
-            <div key={s.id} className={styles.serviceCard}>
-              <div className={styles.serviceLeft}>
-                <div className={styles.logoWrap}>
-                  {/* If logo missing, show first letter */}
-                  {s.logo ? <img src={s.logo} alt={s.name} /> : <div className={styles.logoPlaceholder}>{s.name[0]}</div>}
+          {(() => {
+            // Safely check for platforms data
+            const platforms = item.platforms || item.platform || item.services || [];
+            
+            // Ensure we have an array to work with
+            let platformArray = [];
+            if (Array.isArray(platforms)) {
+              platformArray = platforms;
+            } else if (platforms && typeof platforms === 'string') {
+              platformArray = [platforms];
+            } else if (platforms && typeof platforms === 'object') {
+              platformArray = [platforms];
+            }
+            
+            console.log('Platform data found:', platformArray);
+            
+            // Function to get platform logo
+            const getPlatformLogo = (platformName) => {
+              if (!platformName || typeof platformName !== 'string') return null;
+              
+              const name = platformName.toLowerCase();
+              const logoMap = {
+                'netflix': '/images/netflix.webp',
+                'prime video': '/images/primevideo.svg',
+                'amazon prime': '/images/primevideo.svg',
+                'disney+': '/images/disneyplus.svg',
+                'disney plus': '/images/disneyplus.svg',
+                'hbo max': '/images/hbomax.webp',
+                'hbo': '/images/hbomax.webp',
+                'viaplay': '/images/viaplay.webp',
+                'apple tv': '/images/apple-tv.webp',
+                'apple tv+': '/images/apple-tv.webp',
+                'paramount+': '/images/paramount-plus.webp',
+                'paramount plus': '/images/paramount-plus.webp'
+              };
+              
+              return logoMap[name] || null;
+            };
+            
+            if (platformArray.length > 0) {
+              return platformArray.map((platform, index) => {
+                const platformName = typeof platform === 'string' ? platform : platform?.name || 'Unknown Platform';
+                const logoUrl = getPlatformLogo(platformName);
+                
+                return (
+                  <div key={index} className={styles.serviceCard}>
+                    <div className={styles.serviceLeft}>
+                      <div className={styles.logoWrap}>
+                        {logoUrl ? (
+                          <img src={logoUrl} alt={platformName} className={styles.platformLogo} />
+                        ) : (
+                          <div className={styles.logoPlaceholder}>
+                            {platformName[0]?.toUpperCase() || 'P'}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className={styles.serviceRight}>
+                      <div className={styles.serviceMeta}>
+                        Available on<br/>
+                        <span className={styles.platformName}>{platformName}</span>
+                      </div>
+                      <Button className={styles.watchButton}>Watch now</Button>
+                    </div>
+                  </div>
+                );
+              });
+            } else {
+              return (
+                <div className={styles.noServices}>
+                  <div style={{padding: '20px', textAlign: 'center'}}>
+                    <p style={{marginBottom: '10px', opacity: 0.8}}>
+                      🎬 This content is available to watch
+                    </p>
+                    <small style={{opacity: 0.6}}>
+                      Platform information will be added soon
+                    </small>
+                  </div>
                 </div>
-              </div>
-              <div className={styles.serviceRight}>
-                <div className={styles.serviceMeta}>Subscription<br/><span className={styles.price}>{s.price}</span></div>
-                <Button className={styles.watchButton}>Watch now</Button>
-              </div>
-            </div>
-          ))}
+              );
+            }
+          })()}
         </div>
       </div>
 

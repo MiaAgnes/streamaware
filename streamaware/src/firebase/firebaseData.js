@@ -16,10 +16,23 @@ export const getAllMovies = async () => {
   try {
     const moviesCollection = collection(db, "movies");
     const moviesSnapshot = await getDocs(moviesCollection);
-    const moviesList = moviesSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const moviesList = moviesSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        type: 'movie',
+        title: data.title || '',
+        year: data.year || '',
+        image: data.image || '/images/placeholder.png',
+        description: data.description || '',
+        genres: data.genres || [],
+        platforms: data.platforms || [],
+        country: data.country || [],
+        language: data.language || [],
+        subtitles: data.subtitles || [],
+        ...data
+      };
+    });
     console.log("✅ Movies loaded:", moviesList.length);
     return moviesList;
   } catch (error) {
@@ -32,10 +45,26 @@ export const getAllSeries = async () => {
   try {
     const seriesCollection = collection(db, "series");
     const seriesSnapshot = await getDocs(seriesCollection);
-    const seriesList = seriesSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const seriesList = seriesSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        type: 'series',
+        title: data.title || '',
+        year: data.year || '',
+        image: data.image || '/images/placeholder.png',
+        description: data.description || '',
+        genres: data.genres || [],
+        platforms: data.platforms || [],
+        country: data.country || [],
+        language: data.language || [],
+        subtitles: data.subtitles || [],
+        seasons: data.seasons || '',
+        episodes: data.episodes || '',
+        status: data.status || '',
+        ...data
+      };
+    });
     console.log("✅ Series loaded:", seriesList.length);
     return seriesList;
   } catch (error) {
