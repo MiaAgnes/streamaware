@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { searchContent } from '../firebase/firebaseData';
+import { getImagePath } from '../utils/imageHelpers';
 import styles from './SearchPopup.module.css';
 
 export default function SearchPopup({ isOpen, onClose }) {
@@ -114,7 +115,7 @@ export default function SearchPopup({ isOpen, onClose }) {
 
         <div className={styles.searchContainer}>
           <div className={styles.searchBar}>
-            <img src="/images/search-full.svg" alt="Search" className={styles.searchIcon} />
+            <img src={getImagePath('images/search-full.svg')} alt="Search" className={styles.searchIcon} />
             <input
               type="text"
               placeholder="Search after title.."
