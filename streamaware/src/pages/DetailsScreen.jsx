@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import AuthRequiredPopup from '../components/AuthRequiredPopup';
 import { addToFavorites, removeFromFavorites, getUserFavorites } from '../firebase/firebaseAuth.js';
 import { auth } from '../firebase/firebase';
+import { getImagePath } from '../utils/imageHelpers.js';
 
 export default function DetailsScreen() {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ export default function DetailsScreen() {
     <div className={styles.container}>
       <div
         className={styles.hero}
-        style={{ backgroundImage: `url(${item.image || '/images/hero-placeholder.png'})` }}
+        style={{ backgroundImage: `url(${item.image || getImagePath('images/hero-placeholder.png')})` }}
       >
         <button className={styles.back} onClick={() => navigate(-1)}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -98,7 +99,7 @@ export default function DetailsScreen() {
           }}
         >
           <img
-            src={isFavorite ? '/images/heart-full.svg' : '/images/heart-opacity.svg'}
+            src={isFavorite ? getImagePath('images/heart-full.svg') : getImagePath('images/heart-opacity.svg')}
             alt={isFavorite ? 'Favorited' : 'Add to favorites'}
           />
         </button>
@@ -184,16 +185,16 @@ export default function DetailsScreen() {
               
               const name = platformName.toLowerCase();
               const logoMap = {
-                'netflix': '/images/netflix.webp',
-                'prime video': '/images/primevideo.svg',
-                'amazon prime': '/images/primevideo.svg',
-                'disney+': '/images/disneyplus.svg',
-                'disney plus': '/images/disneyplus.svg',
-                'hbo max': '/images/hbomax.webp',
-                'hbo': '/images/hbomax.webp',
-                'viaplay': '/images/viaplay-white.webp',
-                'apple tv': '/images/apple-tv.webp',
-                'apple tv+': '/images/apple-tv.webp',
+                'netflix': getImagePath('images/netflix.webp'),
+                'prime video': getImagePath('images/primevideo.svg'),
+                'amazon prime': getImagePath('images/primevideo.svg'),
+                'disney+': getImagePath('images/disneyplus.svg'),
+                'disney plus': getImagePath('images/disneyplus.svg'),
+                'hbo max': getImagePath('images/hbomax.webp'),
+                'hbo': getImagePath('images/hbomax.webp'),
+                'viaplay': getImagePath('images/viaplay-white.webp'),
+                'apple tv': getImagePath('images/apple-tv.webp'),
+                'apple tv+': getImagePath('images/apple-tv.webp'),
                 'skyshowtime': 'https://d21buns5ku92am.cloudfront.net/69678/background_image/large-1734104572.png',
                 'yousee play': 'https://www.flatpanels.dk/pictures/youseeplay2022_4.jpg',
                 'blockbuster': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Blockbuster_logo.svg/2560px-Blockbuster_logo.svg.png',

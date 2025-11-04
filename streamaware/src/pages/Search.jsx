@@ -6,6 +6,7 @@ import FilterPopup from '../components/FilterPopup';
 import styles from './Search.module.css';
 import Logo from '../components/Logo.jsx';
 import BottomNav from '../components/BottomNav.jsx';
+import { getImagePath } from '../utils/imageHelpers.js';
 
 export default function Search() {
   const navigate = useNavigate();
@@ -70,10 +71,10 @@ export default function Search() {
       {/* Search Bar */}
       <div className={styles.searchContainer}>
         <div className={styles.searchBar} onClick={handleSearchClick}>
-          <img src="/images/search-full.svg" alt="Search" className={styles.searchIcon} />
+          <img src={getImagePath('images/search-full.svg')} alt="Search" className={styles.searchIcon} />
           <span className={styles.searchPlaceholder}>Search for movie or series..</span>
           <img 
-            src="/images/filter-icon.svg" 
+            src={getImagePath('images/filter-icon.svg')} 
             alt="Filter" 
             className={styles.filterIcon} 
             onClick={handleFilterClick}
@@ -100,7 +101,7 @@ export default function Search() {
                   src={item.image}
                   alt={item.title}
                   className={styles.contentImage}
-                  onError={(e) => { e.target.src = '/images/placeholder.png'; }}
+                  onError={(e) => { e.target.src = getImagePath('images/placeholder.png'); }}
                 />
                 <div className={styles.contentInfo}>
                   <h3 className={styles.contentTitle}>{item.title}</h3>
