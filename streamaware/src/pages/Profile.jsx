@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router';
 import { useState, useEffect } from 'react';
 import styles from './Profile.module.css';
-import ConfirmPopup from '../components/ConfirmPopup';
+import DeleteProfilePopup from '../components/DeleteProfilePopup';
 import Button from '../components/Button';
 import ProfileImageSelector from '../components/ProfileImageSelector';
 import CountryPopup from '../components/CountryPopup';
@@ -182,14 +182,10 @@ export default function Profile() {
       </div>
 
       {confirmDelete && (
-        <ConfirmPopup
+        <DeleteProfilePopup
           isOpen={confirmDelete}
-          title="Delete profile?"
-          message="This will permanently delete your account and data. Are you sure?"
+          onClose={() => setConfirmDelete(false)}
           onConfirm={handleDelete}
-          onCancel={() => setConfirmDelete(false)}
-          confirmText="Delete"
-          cancelText="Cancel"
         />
       )}
 
