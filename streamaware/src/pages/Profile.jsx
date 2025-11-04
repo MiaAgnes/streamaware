@@ -91,8 +91,6 @@ export default function Profile() {
   };
 
   const handleCountryChange = async (selectedCountry) => {
-    console.log('Selected country:', selectedCountry);
-    
     if (guest) {
       // For guest users, save to localStorage and update state
       if (typeof window !== 'undefined' && window.localStorage) {
@@ -107,7 +105,6 @@ export default function Profile() {
           await updateUserCountry(userId, selectedCountry);
           // Update userData state to reflect the new country
           setUserData(prev => prev ? { ...prev, country: selectedCountry } : null);
-          console.log('✅ Country updated successfully');
         }
       } catch (error) {
         console.error('❌ Error updating country:', error);

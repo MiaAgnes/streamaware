@@ -48,24 +48,6 @@ export default function DetailsScreen() {
     return null;
   }
 
-  // Debug: Log the item data to see what fields we have
-  console.log('DetailsScreen item data:', item);
-  console.log('Item keys:', Object.keys(item));
-  console.log('Item details:', {
-    title: item.title,
-    type: item.type, 
-    year: item.year,
-    description: item.description,
-    genres: item.genres,
-    platforms: item.platforms,
-    languages: item.languages,
-    language: item.language,
-    subtitles: item.subtitles,
-    image: item.image
-  });
-
-  // we no longer analyze hero brightness — we'll always render a subtle top overlay
-
   return (
     <div className={styles.container}>
       <div

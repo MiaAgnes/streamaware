@@ -73,9 +73,7 @@ export default function SearchPopup({ isOpen, onClose }) {
 
     setIsLoading(true);
     try {
-      console.log('Searching for:', term);
       const results = await searchContent(term);
-      console.log('Search results received:', results);
       setSearchResults(results);
     } catch (error) {
       console.error('Search error:', error);

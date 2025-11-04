@@ -84,7 +84,6 @@ export default function LogIn() {
     setIsLoading(true);
     try {
   await loginUser(usernameOrEmail, password);
-      console.log("✅ User successfully logged in!");
       // Clear guest flag
       if (typeof window !== 'undefined' && window.localStorage) {
         localStorage.removeItem('isGuest');
