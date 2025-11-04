@@ -61,9 +61,21 @@
   color: white;
 }
 
+.contentTypeInfo {
+  text-align: center;
+  padding: 0rem;
+  margin-bottom: 1rem;
+}
+
+.contentTypeInfo h2 {
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  color: white;
+}
+
 .resultCount {
   color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
+  font-size: 1rem;
   margin: 0;
 }
 

@@ -166,7 +166,12 @@
                 <input id="movieSubtitles" placeholder="Subtitles (comma separated)" class="full-width" />
                 
                 <input id="movieGenres" placeholder="Genres (comma separated)" required class="full-width" />
-                <input id="moviePlatforms" placeholder="Platforms (comma separated)" class="full-width" />
+                <textarea id="moviePlatforms" placeholder="Platforms with URLs (see format below)" class="full-width" rows="4"></textarea>
+                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; font-size: 12px; margin: 5px 0;">
+                    <strong>Platform Format Examples:</strong><br>
+                    • Simple: <code>Netflix, HBO Max, Disney+</code><br>
+                    • With URLs: <code>[{"name":"Netflix","url":"https://netflix.com/title/123"},{"name":"HBO Max","url":"https://max.com/movies/title"}]</code>
+                </div>
                 <input id="movieImage" placeholder="Image path (e.g., /images/movie.jpg)" class="full-width" />
                 <textarea id="movieDescription" placeholder="Description" class="full-width"></textarea>
                 
@@ -208,7 +213,12 @@
                 <input id="seriesSubtitles" placeholder="Subtitles (comma separated)" class="full-width" />
                 
                 <input id="seriesGenres" placeholder="Genres (comma separated)" required class="full-width" />
-                <input id="seriesPlatforms" placeholder="Platforms (comma separated)" class="full-width" />
+                <textarea id="seriesPlatforms" placeholder="Platforms with URLs (see format below)" class="full-width" rows="4"></textarea>
+                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; font-size: 12px; margin: 5px 0;">
+                    <strong>Platform Format Examples:</strong><br>
+                    • Simple: <code>Netflix, HBO Max, Disney+</code><br>
+                    • With URLs: <code>[{"name":"Netflix","url":"https://netflix.com/title/123"},{"name":"HBO Max","url":"https://max.com/movies/title"}]</code>
+                </div>
                 <input id="seriesImage" placeholder="Image path (e.g., /images/series.jpg)" class="full-width" />
                 <textarea id="seriesDescription" placeholder="Description" class="full-width"></textarea>
                 
@@ -276,6 +286,22 @@
             return value.split(',').map(item => item.trim()).filter(item => item.length > 0);
         }
         
+        function parsePlatforms(value) {
+            if (!value.trim()) return [];
+            
+            // Check if it looks like JSON
+            if (value.trim().startsWith('[')) {
+                try {
+                    return JSON.parse(value);
+                } catch (error) {
+                    throw new Error('Invalid JSON format for platforms. Please check the syntax.');
+                }
+            }
+            
+            // Otherwise treat as comma-separated strings
+            return splitAndTrim(value);
+        }
+        
         // Movie form handler
         document.getElementById('addMovieForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -286,7 +312,7 @@
                     title: form.movieTitle.value,
                     year: Number(form.movieYear.value),
                     genres: splitAndTrim(form.movieGenres.value),
-                    platforms: splitAndTrim(form.moviePlatforms.value),
+                    platforms: parsePlatforms(form.moviePlatforms.value),
                     description: form.movieDescription.value,
                     country: form.movieCountry.value ? splitAndTrim(form.movieCountry.value) : null,
                     language: form.movieLanguage.value ? splitAndTrim(form.movieLanguage.value) : null,
@@ -321,7 +347,7 @@
                     title: form.seriesTitle.value,
                     year: Number(form.seriesYear.value),
                     genres: splitAndTrim(form.seriesGenres.value),
-                    platforms: splitAndTrim(form.seriesPlatforms.value),
+                    platforms: parsePlatforms(form.seriesPlatforms.value),
                     description: form.seriesDescription.value,
                     seasons: form.seriesSeasons.value ? Number(form.seriesSeasons.value) : null,
                     episodes: form.seriesEpisodes.value ? Number(form.seriesEpisodes.value) : null,

@@ -73,11 +73,10 @@ export default function DetailsScreen() {
           className={styles.fav}
           aria-label="Favorite"
           onClick={async () => {
-            // If guest, show auth-required popup and save origin so we can redirect back
+          
             if (isGuestUser() || !auth?.currentUser) {
               if (typeof window !== 'undefined' && window.sessionStorage) {
-                sessionStorage.setItem('guestOrigin', window.location.pathname + window.location.search);
-                // save the item so we can restore it after login
+                sessionStorage.setItem('guestOrigin', window.location.pathname + window.location.search); 
                 try {
                   sessionStorage.setItem('guestOriginItem', JSON.stringify(item));
                 } catch (err) { console.warn('Could not save guestOriginItem', err); }
@@ -197,7 +196,40 @@ export default function DetailsScreen() {
             if (platformArray.length > 0) {
               return platformArray.map((platform, index) => {
                 const platformName = typeof platform === 'string' ? platform : platform?.name || 'Unknown Platform';
+                const platformUrl = typeof platform === 'object' ? platform?.url : null;
                 const logoUrl = getPlatformLogo(platformName);
+                
+                const handleWatchNow = () => {
+                  if (platformUrl) {
+                    // Open the specific streaming URL
+                    window.open(platformUrl, '_blank', 'noopener,noreferrer');
+                  } else {
+                    // Fallback: Search for the title on the platform
+                    const searchQuery = encodeURIComponent(item.title);
+                    const fallbackUrls = {
+                      'netflix': `https://www.netflix.com/search?q=${searchQuery}`,
+                      'prime video': `https://www.amazon.com/s?k=${searchQuery}&i=prime-instant-video`,
+                      'amazon prime': `https://www.amazon.com/s?k=${searchQuery}&i=prime-instant-video`,
+                      'disney+': `https://www.disneyplus.com/search/${searchQuery}`,
+                      'disney plus': `https://www.disneyplus.com/search/${searchQuery}`,
+                      'hbo max': `https://www.max.com/search?q=${searchQuery}`,
+                      'hbo': `https://www.max.com/search?q=${searchQuery}`,
+                      'viaplay': `https://viaplay.dk/search?query=${searchQuery}`,
+                      'apple tv': `https://tv.apple.com/search?term=${searchQuery}`,
+                      'apple tv+': `https://tv.apple.com/search?term=${searchQuery}`,
+                      'youtube': `https://www.youtube.com/results?search_query=${searchQuery}`,
+                    };
+                    
+                    const platformKey = platformName.toLowerCase();
+                    const fallbackUrl = fallbackUrls[platformKey];
+                    
+                    if (fallbackUrl) {
+                      window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+                    } else {
+                      alert(`Please visit ${platformName} to watch ${item.title}`);
+                    }
+                  }
+                };
                 
                 return (
                   <div key={index} className={styles.serviceCard}>
@@ -221,7 +253,9 @@ export default function DetailsScreen() {
                         Available on<br/>
                         <span className={styles.platformName}>{platformName}</span>
                       </div>
-                      <Button className={styles.watchButton}>Watch now</Button>
+                      <Button className={styles.watchButton} onClick={handleWatchNow}>
+                        Watch now
+                      </Button>
                     </div>
                   </div>
                 );

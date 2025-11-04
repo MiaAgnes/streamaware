@@ -76,14 +76,41 @@ export const getAllSeries = async () => {
 export const getMoviesByPlatform = async (platform) => {
   try {
     const moviesCollection = collection(db, "movies");
-    const q = query(moviesCollection, where("platforms", "array-contains", platform));
-    const querySnapshot = await getDocs(q);
-    const moviesList = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    console.log(`✅ Movies loaded for ${platform}:`, moviesList.length);
-    return moviesList;
+    const moviesSnapshot = await getDocs(moviesCollection);
+    const movies = moviesSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        type: 'movie',
+        title: data.title || '',
+        year: data.year || '',
+        image: data.image || '/images/placeholder.png',
+        description: data.description || '',
+        genres: data.genres || [],
+        platforms: data.platforms || [],
+        country: data.country || [],
+        language: data.language || [],
+        subtitles: data.subtitles || [],
+        ...data
+      };
+    });
+
+    // Filter movies that have the specified platform
+    const filteredMovies = movies.filter(movie => {
+      if (!movie.platforms || movie.platforms.length === 0) return false;
+      
+      return movie.platforms.some(itemPlatform => {
+        // Handle both string and object platforms
+        const platformName = typeof itemPlatform === 'string' 
+          ? itemPlatform 
+          : itemPlatform?.name || '';
+        
+        return platformName.toLowerCase().includes(platform.toLowerCase());
+      });
+    });
+
+    console.log(`✅ Movies loaded for ${platform}:`, filteredMovies.length);
+    return filteredMovies;
   } catch (error) {
     console.error(`❌ Error loading movies for ${platform}:`, error);
     throw error;
@@ -94,14 +121,44 @@ export const getMoviesByPlatform = async (platform) => {
 export const getSeriesByPlatform = async (platform) => {
   try {
     const seriesCollection = collection(db, "series");
-    const q = query(seriesCollection, where("platforms", "array-contains", platform));
-    const querySnapshot = await getDocs(q);
-    const seriesList = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    console.log(`✅ Series loaded for ${platform}:`, seriesList.length);
-    return seriesList;
+    const seriesSnapshot = await getDocs(seriesCollection);
+    const series = seriesSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        type: 'series',
+        title: data.title || '',
+        year: data.year || '',
+        image: data.image || '/images/placeholder.png',
+        description: data.description || '',
+        genres: data.genres || [],
+        platforms: data.platforms || [],
+        country: data.country || [],
+        language: data.language || [],
+        subtitles: data.subtitles || [],
+        seasons: data.seasons || '',
+        episodes: data.episodes || '',
+        status: data.status || '',
+        ...data
+      };
+    });
+
+    // Filter series that have the specified platform
+    const filteredSeries = series.filter(show => {
+      if (!show.platforms || show.platforms.length === 0) return false;
+      
+      return show.platforms.some(itemPlatform => {
+        // Handle both string and object platforms
+        const platformName = typeof itemPlatform === 'string' 
+          ? itemPlatform 
+          : itemPlatform?.name || '';
+        
+        return platformName.toLowerCase().includes(platform.toLowerCase());
+      });
+    });
+
+    console.log(`✅ Series loaded for ${platform}:`, filteredSeries.length);
+    return filteredSeries;
   } catch (error) {
     console.error(`❌ Error loading series for ${platform}:`, error);
     throw error;

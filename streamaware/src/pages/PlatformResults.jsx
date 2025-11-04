@@ -1,59 +1,55 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router';
-import { getAllMovies, getAllSeries } from '../firebase/firebaseData';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import { getMoviesByPlatform, getSeriesByPlatform } from '../firebase/firebaseData';
 import styles from './PlatformResults.module.css';
 import Logo from '../components/Logo.jsx';
 import BottomNav from '../components/BottomNav.jsx';
 
 export default function PlatformResults() {
+  const { state } = useLocation();
   const navigate = useNavigate();
-  const location = useLocation();
-  const platform = location.state?.platform || 'Netflix';
-  
-  const [allContent, setAllContent] = useState([]);
+  const platform = state?.platform;
+  const [content, setContent] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Filter content by platform
-  const filteredContent = useMemo(() => {
-    return allContent.filter(item => {
-      // Platform filter - check if item has the selected platform
-      if (item.platforms) {
-        return item.platforms.some(itemPlatform => 
-          itemPlatform.toLowerCase().includes(platform.toLowerCase())
-        );
-      }
-      return false;
-    });
-  }, [allContent, platform]);
-
   useEffect(() => {
-    const loadContent = async () => {
+    const loadPlatformContent = async () => {
+      if (!platform) {
+        navigate('/');
+        return;
+      }
+
       try {
         setLoading(true);
         const [movies, series] = await Promise.all([
-          getAllMovies(),
-          getAllSeries()
+          getMoviesByPlatform(platform),
+          getSeriesByPlatform(platform)
         ]);
-        
-        const allItems = [...movies, ...series];
-        setAllContent(allItems);
+
+        const allContent = [...movies, ...series];
+        setContent(allContent);
       } catch (error) {
-        console.error('Error loading content:', error);
+        console.error('Error loading platform content:', error);
+        setContent([]);
       } finally {
         setLoading(false);
       }
     };
 
-    loadContent();
-  }, []);
+    loadPlatformContent();
+  }, [platform, navigate]);
 
   const handleItemClick = (item) => {
     navigate('/details', { state: { item } });
   };
 
   const handleBackClick = () => {
-    navigate(-1); // Go back to previous page
+    navigate(-1);
   };
+
+  if (!platform) {
+    return null;
+  }
 
   return (
     <div className={styles.container}>
@@ -69,10 +65,10 @@ export default function PlatformResults() {
       </div>
 
       {/* Platform Info */}
-      <div className={styles.platformInfo}>
-        <h2>{platform} Content</h2>
+      <div className={styles.contentTypeInfo}>
+        <h2>{platform}</h2>
         <p className={styles.resultCount}>
-          {loading ? 'Loading...' : `${filteredContent.length} titles available`}
+          {loading ? 'Loading...' : `${content.length} titles available`}
         </p>
       </div>
 
@@ -80,13 +76,13 @@ export default function PlatformResults() {
       <div className={styles.content}>
         {loading ? (
           <div className={styles.loading}>Loading content...</div>
-        ) : filteredContent.length === 0 ? (
+        ) : content.length === 0 ? (
           <div className={styles.noResults}>
             <p>No content found for {platform}</p>
           </div>
         ) : (
           <div className={styles.contentGrid}>
-            {filteredContent.map((item) => (
+            {content.map((item) => (
               <div
                 key={item.id}
                 className={styles.contentCard}
@@ -100,7 +96,7 @@ export default function PlatformResults() {
                 <div className={styles.contentInfo}>
                   <h3 className={styles.contentTitle}>{item.title}</h3>
                   <p className={styles.contentType}>
-                    {item.type || (item.seasons ? 'Series' : 'Movie')} • {item.year}
+                    {item.type === 'movie' ? 'Movie' : item.type === 'series' ? 'Series' : (item.seasons ? 'Series' : 'Movie')} • {item.year}
                   </p>
                 </div>
               </div>
