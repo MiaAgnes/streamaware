@@ -7,7 +7,7 @@ export default function SplashScreen({ onComplete }) {
   const [debugInfo, setDebugInfo] = useState('Loading animation...');
   
   const { RiveComponent, rive } = useRive({
-    src: '/streamaware/images/splash-animation.riv', // Updated path for GitHub Pages
+    src: import.meta.env.DEV ? '/images/splash-animation.riv' : '/streamaware/images/splash-animation.riv',
     autoplay: true,
     onLoad: () => {
       console.log('Rive animation loaded successfully');

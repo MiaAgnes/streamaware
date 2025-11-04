@@ -38,7 +38,7 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/streamaware">
       <Routes>
         <Route path="/" element={<StartScreen />} />
         <Route path="/signup" element={<SignUp />} />
