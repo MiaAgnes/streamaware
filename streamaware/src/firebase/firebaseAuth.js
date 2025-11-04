@@ -7,6 +7,12 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
+// Helper function for image paths
+const getDefaultProfileImage = () => {
+  // Return the path that will work in both dev and production
+  return '/images/cat-profile.svg';
+};
+
 // Sign up (ny bruger)
 export const registerUser = async (email, password, username, country) => {
   try {
@@ -20,7 +26,7 @@ export const registerUser = async (email, password, username, country) => {
       email: email,
       country: country,
       favorites: [],
-      profileImage: '/images/cat-profile.svg' // Default profile image
+      profileImage: getDefaultProfileImage() // Default profile image
     });
 
     console.log("✅ Bruger oprettet:", user.uid);

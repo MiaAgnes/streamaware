@@ -4,6 +4,7 @@ import { getCurrentUserData } from '../firebase/firebaseAuth';
 import { auth } from '../firebase/firebase';
 import styles from './BottomNav.module.css';
 import AuthRequiredPopup from './AuthRequiredPopup';
+import { getImagePath } from '../utils/imageHelpers.js';
 
 function isGuestUser() {
   return (typeof window !== 'undefined' && window.localStorage && localStorage.getItem('isGuest') === '1');
@@ -13,7 +14,7 @@ export default function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
   const [showAuthPopup, setShowAuthPopup] = useState(false);
-  const [userProfileImage, setUserProfileImage] = useState('/images/profile-opacity.svg');
+  const [userProfileImage, setUserProfileImage] = useState(getImagePath('images/profile-opacity.svg'));
 
   useEffect(() => {
     const loadUserProfileImage = async () => {
@@ -62,13 +63,13 @@ export default function BottomNav() {
     <>
       <nav className={styles.bottomNav}>
         <button className={styles.navButton} onClick={() => handleNav('/homepage')}>
-          <img src={location.pathname === '/homepage' ? '/images/home-full.svg' : '/images/home-opacity.svg'} alt="Home" />
+          <img src={location.pathname === '/homepage' ? getImagePath('images/home-full.svg') : getImagePath('images/home-opacity.svg')} alt="Home" />
         </button>
         <button className={styles.navButton} onClick={() => handleNav('/search')}>
-          <img src={location.pathname === '/search' ? '/images/search-full.svg' : '/images/search-opacity.svg'} alt="Search" />
+          <img src={location.pathname === '/search' ? getImagePath('images/search-full.svg') : getImagePath('images/search-opacity.svg')} alt="Search" />
         </button>
         <button className={styles.navButton} onClick={() => handleNav('/favorites')}>
-          <img src={location.pathname === '/favorites' ? '/images/heart-full.svg' : '/images/heart-opacity.svg'} alt="Favorites" />
+          <img src={location.pathname === '/favorites' ? getImagePath('images/heart-full.svg') : getImagePath('images/heart-opacity.svg')} alt="Favorites" />
         </button>
         <button className={styles.navButton} onClick={() => handleNav('/profile')}>
           {!isGuestUser() ? (
@@ -78,7 +79,7 @@ export default function BottomNav() {
               className={location.pathname === '/profile' ? styles.profileImageActive : styles.profileImage}
             />
           ) : (
-            <img src={location.pathname === '/profile' ? '/images/profile-full.svg' : '/images/profile-opacity.svg'} alt="Profile" />
+            <img src={location.pathname === '/profile' ? getImagePath('images/profile-full.svg') : getImagePath('images/profile-opacity.svg')} alt="Profile" />
           )}
         </button>
       </nav>

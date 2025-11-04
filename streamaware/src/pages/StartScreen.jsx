@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import styles from './StartScreen.module.css';
 import Button from '../components/Button';
 import HelpPopup from '../components/HelpPopup';
+import { getImagePath } from '../utils/imageHelpers.js';
 
 export default function StartScreen() {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -36,7 +37,10 @@ export default function StartScreen() {
   };
 
   return (
-    <div className={styles.container}>
+    <div 
+      className={styles.container}
+      style={{ backgroundImage: `url(${getImagePath('images/startscreen.png')})` }}
+    >
       <button onClick={openHelp} className={styles.helpIcon}>
         ?
       </button>

@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import styles from './ProfileImageSelector.module.css';
+import { getImagePath } from '../utils/imageHelpers.js';
 
 const availableProfileImages = [
-  '/images/cat-profile.svg',
-  '/images/dog-profile.svg',
-  '/images/lion-profile.svg',
-  '/images/rabbit-profile.svg'
+  getImagePath('images/cat-profile.svg'),
+  getImagePath('images/dog-profile.svg'),
+  getImagePath('images/lion-profile.svg'),
+  getImagePath('images/rabbit-profile.svg')
 ];
 
 export default function ProfileImageSelector({ isOpen, currentImage, onClose, onSelect }) {

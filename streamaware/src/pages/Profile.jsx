@@ -10,6 +10,7 @@ import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import { auth, db } from '../firebase/firebase';
 import { deleteDoc, doc } from 'firebase/firestore';
 import BottomNav from '../components/BottomNav.jsx';
+import { getImagePath } from '../utils/imageHelpers.js';
 
 function isGuestUser() {
   return (typeof window !== 'undefined' && window.localStorage && localStorage.getItem('isGuest') === '1');
@@ -159,7 +160,7 @@ export default function Profile() {
         {/* Profile Image */}
         <div className={styles.profileImageContainer}>
           <img 
-            src={userData?.profileImage || '/images/cat-profile.svg'} 
+            src={userData?.profileImage || getImagePath('images/cat-profile.svg')} 
             alt="Profile" 
             className={styles.profileImage}
             onClick={() => setShowProfileImageSelector(true)}
@@ -189,7 +190,7 @@ export default function Profile() {
       {showProfileImageSelector && (
         <ProfileImageSelector
           isOpen={showProfileImageSelector}
-          currentImage={userData?.profileImage || '/images/cat-profile.svg'}
+          currentImage={userData?.profileImage || getImagePath('images/cat-profile.svg')}
           onClose={() => setShowProfileImageSelector(false)}
           onSelect={handleProfileImageChange}
         />

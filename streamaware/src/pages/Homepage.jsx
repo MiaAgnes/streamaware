@@ -4,6 +4,7 @@ import styles from './Homepage.module.css';
 import Logo from '../components/Logo.jsx';
 import BottomNav from '../components/BottomNav.jsx';
 import { getAllMovies, getAllSeries, getContentByGenre } from '../firebase/firebaseData';
+import { getImagePath } from '../utils/imageHelpers.js';
 
 export default function Homepage() {
   const [featuredContent, setFeaturedContent] = useState([]);
@@ -20,12 +21,12 @@ export default function Homepage() {
   const filters = ['Movies', 'Series'];
 
   const streamingServices = [
-    { name: 'Netflix', logo: './images/netflix.webp' },
-    { name: 'Prime Video', logo: './images/primevideo.svg' },
-    { name: 'Disney+', logo: './images/disneyplus.svg' },
-    { name: 'HBO Max', logo: './images/hbomax.webp' },
-    { name: 'Viaplay', logo: './images/viaplay.webp' },
-    { name: 'Apple TV', logo: './images/apple-tv.webp' }
+    { name: 'Netflix', logo: getImagePath('images/netflix.webp') },
+    { name: 'Prime Video', logo: getImagePath('images/primevideo.svg') },
+    { name: 'Disney+', logo: getImagePath('images/disneyplus.svg') },
+    { name: 'HBO Max', logo: getImagePath('images/hbomax.webp') },
+    { name: 'Viaplay', logo: getImagePath('images/viaplay.webp') },
+    { name: 'Apple TV', logo: getImagePath('images/apple-tv.webp') }
   ];
 
   // Load content from Firebase
