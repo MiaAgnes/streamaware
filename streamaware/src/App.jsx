@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
 import SplashScreen from './components/SplashScreen.jsx'
 import StartScreen from './pages/StartScreen.jsx'
@@ -19,8 +19,19 @@ function App() {
   const [showSplash, setShowSplash] = useState(true)
 
   const handleSplashComplete = () => {
+    console.log('Splash screen completed, showing main app');
     setShowSplash(false)
   }
+
+  // Emergency fallback - if splash doesn't complete after 6 seconds, skip it
+  useEffect(() => {
+    const emergencyTimer = setTimeout(() => {
+      console.log('Emergency fallback - forcing app to show');
+      setShowSplash(false);
+    }, 6000);
+
+    return () => clearTimeout(emergencyTimer);
+  }, []);
 
   if (showSplash) {
     return <SplashScreen onComplete={handleSplashComplete} />
