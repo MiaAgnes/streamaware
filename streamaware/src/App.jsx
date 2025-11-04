@@ -38,7 +38,7 @@ function App() {
   }
 
   return (
-    <BrowserRouter basename="/streamaware">
+    <BrowserRouter basename={import.meta.env.DEV ? "" : "/streamaware"}>
       <Routes>
         <Route path="/" element={<StartScreen />} />
         <Route path="/signup" element={<SignUp />} />
