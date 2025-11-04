@@ -20,12 +20,12 @@ export default function Homepage() {
   const filters = ['Movies', 'Series'];
 
   const streamingServices = [
-    { name: 'Netflix', logo: '/images/netflix.webp' },
-    { name: 'Prime Video', logo: '/images/primevideo.svg' },
-    { name: 'Disney+', logo: '/images/disneyplus.svg' },
-    { name: 'HBO Max', logo: '/images/hbomax.webp' },
-    { name: 'Viaplay', logo: '/images/viaplay.webp' },
-    { name: 'Apple TV', logo: '/images/apple-tv.webp' }
+    { name: 'Netflix', logo: './images/netflix.webp' },
+    { name: 'Prime Video', logo: './images/primevideo.svg' },
+    { name: 'Disney+', logo: './images/disneyplus.svg' },
+    { name: 'HBO Max', logo: './images/hbomax.webp' },
+    { name: 'Viaplay', logo: './images/viaplay.webp' },
+    { name: 'Apple TV', logo: './images/apple-tv.webp' }
   ];
 
   // Load content from Firebase
