@@ -82,9 +82,9 @@ export default function PlatformResults() {
           </div>
         ) : (
           <div className={styles.contentGrid}>
-            {content.map((item) => (
+            {content.map((item, index) => (
               <div
-                key={item.id}
+                key={`platform-content-${item.id}-${index}`}
                 className={styles.contentCard}
                 onClick={() => handleItemClick(item)}
               >

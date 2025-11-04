@@ -87,9 +87,9 @@ export default function ContentTypeResults() {
           </div>
         ) : (
           <div className={styles.contentGrid}>
-            {filteredContent.map((item) => (
+            {filteredContent.map((item, index) => (
               <div
-                key={item.id}
+                key={`content-${item.id}-${index}`}
                 className={styles.contentCard}
                 onClick={() => handleItemClick(item)}
               >

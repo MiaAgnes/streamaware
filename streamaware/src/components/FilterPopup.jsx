@@ -77,9 +77,9 @@ export default function FilterPopup({ isOpen, onClose, onApplyFilters }) {
           <div className={styles.filterSection}>
             <h3 className={styles.sectionTitle}>Genres</h3>
             <div className={styles.filterGrid}>
-              {genres.map((genre) => (
+              {genres.map((genre, index) => (
                 <button
-                  key={genre}
+                  key={`genre-${index}-${genre}`}
                   className={`${styles.filterButton} ${selectedGenres.includes(genre) ? styles.active : ''}`}
                   onClick={() => toggleFilter(selectedGenres, setSelectedGenres, genre)}
                 >
@@ -93,9 +93,9 @@ export default function FilterPopup({ isOpen, onClose, onApplyFilters }) {
           <div className={styles.filterSection}>
             <h3 className={styles.sectionTitle}>Platforms</h3>
             <div className={styles.filterGrid}>
-              {platforms.map((platform) => (
+              {platforms.map((platform, index) => (
                 <button
-                  key={platform}
+                  key={`platform-${index}-${platform}`}
                   className={`${styles.filterButton} ${selectedPlatforms.includes(platform) ? styles.active : ''}`}
                   onClick={() => toggleFilter(selectedPlatforms, setSelectedPlatforms, platform)}
                 >
@@ -109,9 +109,9 @@ export default function FilterPopup({ isOpen, onClose, onApplyFilters }) {
           <div className={styles.filterSection}>
             <h3 className={styles.sectionTitle}>Content Type</h3>
             <div className={styles.filterGrid}>
-              {contentTypes.map((type) => (
+              {contentTypes.map((type, index) => (
                 <button
-                  key={type}
+                  key={`contentType-${index}-${type}`}
                   className={`${styles.filterButton} ${selectedContentType.includes(type) ? styles.active : ''}`}
                   onClick={() => toggleFilter(selectedContentType, setSelectedContentType, type)}
                 >
@@ -125,9 +125,9 @@ export default function FilterPopup({ isOpen, onClose, onApplyFilters }) {
           <div className={styles.filterSection}>
             <h3 className={styles.sectionTitle}>Languages</h3>
             <div className={styles.filterGrid}>
-              {languages.map((language) => (
+              {languages.map((language, index) => (
                 <button
-                  key={language}
+                  key={`language-${index}-${language}`}
                   className={`${styles.filterButton} ${selectedLanguages.includes(language) ? styles.active : ''}`}
                   onClick={() => toggleFilter(selectedLanguages, setSelectedLanguages, language)}
                 >
@@ -141,9 +141,9 @@ export default function FilterPopup({ isOpen, onClose, onApplyFilters }) {
           <div className={styles.filterSection}>
             <h3 className={styles.sectionTitle}>Subtitles</h3>
             <div className={styles.filterGrid}>
-              {subtitles.map((subtitle) => (
+              {subtitles.map((subtitle, index) => (
                 <button
-                  key={subtitle}
+                  key={`subtitle-${index}-${subtitle}`}
                   className={`${styles.filterButton} ${selectedSubtitles.includes(subtitle) ? styles.active : ''}`}
                   onClick={() => toggleFilter(selectedSubtitles, setSelectedSubtitles, subtitle)}
                 >

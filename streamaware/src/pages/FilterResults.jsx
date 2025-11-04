@@ -1,35 +1,22 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 import { getAllMovies, getAllSeries } from '../firebase/firebaseData';
 import styles from './FilterResults.module.css';
 import Logo from '../components/Logo.jsx';
 import BottomNav from '../components/BottomNav.jsx';
 
 export default function FilterResults() {
+  const { state } = useLocation();
   const navigate = useNavigate();
-  const location = useLocation();
+  const filters = state?.filters || {};
+  
+  const [allContent, setAllContent] = useState([]);
   const [filteredContent, setFilteredContent] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // Get filters from navigation state with proper fallback
-  const filters = useMemo(() => {
-    return location.state?.filters || {
-      genres: [],
-      platforms: [],
-      contentType: [],
-      countries: []
-    };
-  }, [location.state?.filters]);
 
-  // Redirect back if no filters were provided
+  // Load all content
   useEffect(() => {
-    if (!location.state?.filters) {
-      navigate('/search', { replace: true });
-    }
-  }, [location.state, navigate]);
-
-  useEffect(() => {
-    const loadAndFilterContent = async () => {
+    const loadContent = async () => {
       try {
         setLoading(true);
         const [movies, series] = await Promise.all([
@@ -37,80 +24,103 @@ export default function FilterResults() {
           getAllSeries()
         ]);
         
-        const allContent = [...movies, ...series];
+        const combined = [...movies, ...series];
+        setAllContent(combined);
         
-        // Filter content based on applied filters
-        const filtered = allContent.filter(item => {
-          // Genre filter
-          if (filters.genres.length > 0) {
-            const hasMatchingGenre = filters.genres.some(filterGenre => 
-              item.genres?.some(genre => genre.toLowerCase().includes(filterGenre.toLowerCase()))
-            );
-            if (!hasMatchingGenre) return false;
-          }
-          
-          // Platform filter
-          if (filters.platforms.length > 0) {
-            const hasMatchingPlatform = filters.platforms.some(filterPlatform => 
-              item.platforms?.some(platform => platform.toLowerCase().includes(filterPlatform.toLowerCase()))
-            );
-            if (!hasMatchingPlatform) return false;
-          }
-          
-          // Content type filter
-          if (filters.contentType.length > 0) {
-            const itemType = item.type || (movies.includes(item) ? 'Movie' : 'Series');
-            const hasMatchingType = filters.contentType.includes(itemType);
-            if (!hasMatchingType) return false;
-          }
-          
-          // Language filter
-          if (filters.languages.length > 0) {
-            const hasMatchingLanguage = filters.languages.some(filterLanguage => 
-              item.languages?.some(language => language.toLowerCase().includes(filterLanguage.toLowerCase()))
-            );
-            if (!hasMatchingLanguage) return false;
-          }
-          
-          // Subtitles filter
-          if (filters.subtitles.length > 0) {
-            const hasMatchingSubtitle = filters.subtitles.some(filterSubtitle => 
-              item.subtitles?.some(subtitle => subtitle.toLowerCase().includes(filterSubtitle.toLowerCase()))
-            );
-            if (!hasMatchingSubtitle) return false;
-          }
-          
-          return true;
-        });
-        
+        // Apply filters
+        const filtered = applyFilters(combined, filters);
         setFilteredContent(filtered);
       } catch (error) {
         console.error('Error loading and filtering content:', error);
+        setAllContent([]);
+        setFilteredContent([]);
       } finally {
         setLoading(false);
       }
     };
 
-    loadAndFilterContent();
-  }, [filters]);
+    loadContent();
+  }, []);
+
+  const applyFilters = (content, filters) => {
+    let filtered = [...content];
+
+    // Filter by genres
+    if (filters.genres && filters.genres.length > 0) {
+      filtered = filtered.filter(item =>
+        item.genres && item.genres.some(genre =>
+          filters.genres.includes(genre)
+        )
+      );
+    }
+
+    // Filter by platforms
+    if (filters.platforms && filters.platforms.length > 0) {
+      filtered = filtered.filter(item => {
+        if (!item.platforms || item.platforms.length === 0) return false;
+        
+        return item.platforms.some(itemPlatform => {
+          const platformName = typeof itemPlatform === 'string' 
+            ? itemPlatform 
+            : itemPlatform?.name || '';
+          
+          return filters.platforms.some(filterPlatform => 
+            platformName.toLowerCase().includes(filterPlatform.toLowerCase())
+          );
+        });
+      });
+    }
+
+    // Filter by content type
+    if (filters.contentType && filters.contentType.length > 0) {
+      filtered = filtered.filter(item => {
+        const itemType = item.type === 'movie' ? 'Movies' : 'Series';
+        return filters.contentType.includes(itemType);
+      });
+    }
+
+    // Filter by languages
+    if (filters.languages && filters.languages.length > 0) {
+      filtered = filtered.filter(item => {
+        if (!item.language && !item.languages) return false;
+        
+        const itemLanguages = item.languages || item.language || [];
+        const languageArray = Array.isArray(itemLanguages) ? itemLanguages : [itemLanguages];
+        
+        return languageArray.some(lang => {
+          const languageName = typeof lang === 'string' ? lang : lang?.name || '';
+          return filters.languages.some(filterLang =>
+            languageName.toLowerCase().includes(filterLang.toLowerCase())
+          );
+        });
+      });
+    }
+
+    // Filter by subtitles
+    if (filters.subtitles && filters.subtitles.length > 0) {
+      filtered = filtered.filter(item => {
+        if (!item.subtitles) return false;
+        
+        const subtitleArray = Array.isArray(item.subtitles) ? item.subtitles : [item.subtitles];
+        
+        return subtitleArray.some(subtitle => {
+          const subtitleName = typeof subtitle === 'string' ? subtitle : subtitle?.name || '';
+          return filters.subtitles.some(filterSub =>
+            subtitleName.toLowerCase().includes(filterSub.toLowerCase())
+          );
+        });
+      });
+    }
+
+    return filtered;
+  };
 
   const handleItemClick = (item) => {
     navigate('/details', { state: { item } });
   };
 
   const handleBackClick = () => {
-    navigate(-1); // Go back to previous page
-  };
-
-  const getActiveFilterText = () => {
-    const activeFilters = [];
-    if (filters.genres.length > 0) activeFilters.push(...filters.genres);
-    if (filters.platforms.length > 0) activeFilters.push(...filters.platforms);
-    if (filters.contentType.length > 0) activeFilters.push(...filters.contentType);
-    if (filters.languages.length > 0) activeFilters.push(...filters.languages);
-    if (filters.subtitles.length > 0) activeFilters.push(...filters.subtitles);
-    
-    return activeFilters.length > 0 ? activeFilters.join(', ') : 'All content';
+    navigate(-1);
   };
 
   return (
@@ -126,10 +136,9 @@ export default function FilterResults() {
         <Logo className={styles.logo} />
       </div>
 
-      {/* Filter Info */}
-      <div className={styles.filterInfo}>
-        <h2>Filtered Results</h2>
-        <p className={styles.filterText}>{getActiveFilterText()}</p>
+      {/* Content Type Info */}
+      <div className={styles.contentTypeInfo}>
+        <h2>Filter Results</h2>
         <p className={styles.resultCount}>
           {loading ? 'Loading...' : `${filteredContent.length} results found`}
         </p>
@@ -138,24 +147,23 @@ export default function FilterResults() {
       {/* Content Grid */}
       <div className={styles.content}>
         {loading ? (
-          <div className={styles.loading}>Loading filtered content...</div>
+          <div className={styles.loading}>Loading content...</div>
         ) : filteredContent.length === 0 ? (
           <div className={styles.noResults}>
-            <h3>No results found</h3>
-            <p>Try adjusting your filters to find more content</p>
+            <p>No content matches your filters</p>
           </div>
         ) : (
           <div className={styles.contentGrid}>
-            {filteredContent.map((item) => (
+            {filteredContent.map((item, index) => (
               <div
-                key={item.id}
-                className={styles.contentItem}
+                key={`filter-result-${item.id}-${index}`}
+                className={styles.contentCard}
                 onClick={() => handleItemClick(item)}
               >
                 <img 
-                  src={item.image || item.posterUrl} 
+                  src={item.image || item.posterUrl || '/images/placeholder.png'} 
                   alt={item.title}
-                  className={styles.contentImage}
+                  onError={(e) => { e.target.src = '/images/placeholder.png'; }}
                 />
                 <div className={styles.contentInfo}>
                   <h3 className={styles.contentTitle}>{item.title}</h3>
@@ -169,7 +177,6 @@ export default function FilterResults() {
         )}
       </div>
 
-      {/* Bottom Navigation */}
       <BottomNav />
     </div>
   );
