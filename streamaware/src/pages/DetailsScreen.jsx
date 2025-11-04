@@ -16,6 +16,8 @@ export default function DetailsScreen() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
   const [showAuthPopup, setShowAuthPopup] = useState(false);
+  const [showLanguagesPopup, setShowLanguagesPopup] = useState(false);
+  const [showSubtitlesPopup, setShowSubtitlesPopup] = useState(false);
 
   // guest detection helper
   function isGuestUser() {
@@ -56,6 +58,9 @@ export default function DetailsScreen() {
     description: item.description,
     genres: item.genres,
     platforms: item.platforms,
+    languages: item.languages,
+    language: item.language,
+    subtitles: item.subtitles,
     image: item.image
   });
 
@@ -148,7 +153,31 @@ export default function DetailsScreen() {
           )}
         </div>
 
-        <p className={styles.description}>{item?.description || 'No description available.'}</p>
+        {/* Available label */}
+        <p className={styles.availableLabel}>Available:</p>
+
+        {/* Second row for Languages and Subtitles */}
+        <div className={styles.pills}>
+          {/* Languages pill */}
+          {item?.language && Array.isArray(item.language) && item.language.length > 0 && (
+            <span 
+              className={`${styles.pill} ${styles.clickablePill}`}
+              onClick={() => setShowLanguagesPopup(true)}
+            >
+              Languages
+            </span>
+          )}
+          
+          {/* Subtitles pill */}
+          {item?.subtitles && Array.isArray(item.subtitles) && item.subtitles.length > 0 && (
+            <span 
+              className={`${styles.pill} ${styles.clickablePill}`}
+              onClick={() => setShowSubtitlesPopup(true)}
+            >
+              Subtitles
+            </span>
+          )}
+        </div>        <p className={styles.description}>{item?.description || 'No description available.'}</p>
 
         <div className={styles.services}>
           {(() => {
@@ -281,6 +310,54 @@ export default function DetailsScreen() {
           })()}
         </div>
       </div>
+
+      {/* Languages Popup */}
+      {showLanguagesPopup && (
+        <div className={styles.popupOverlay} onClick={() => setShowLanguagesPopup(false)}>
+          <div className={styles.popup} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.popupHeader}>
+              <h3>Available Languages</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowLanguagesPopup(false)}
+              >
+                ×
+              </button>
+            </div>
+                        <div className={styles.popupContent}>
+              {item?.language?.map((language, index) => (
+                <span key={index} className={styles.popupPill}>
+                  {language}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Subtitles Popup */}
+      {showSubtitlesPopup && (
+        <div className={styles.popupOverlay} onClick={() => setShowSubtitlesPopup(false)}>
+          <div className={styles.popup} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.popupHeader}>
+              <h3>Available Subtitles</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowSubtitlesPopup(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className={styles.popupContent}>
+              {item?.subtitles?.map((subtitle, index) => (
+                <span key={index} className={styles.popupPill}>
+                  {subtitle}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>
