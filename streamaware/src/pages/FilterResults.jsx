@@ -8,14 +8,14 @@ import BottomNav from '../components/BottomNav.jsx';
 export default function FilterResults() {
   const { state } = useLocation();
   const navigate = useNavigate();
-  const filters = state?.filters || {};
   
-  const [allContent, setAllContent] = useState([]);
   const [filteredContent, setFilteredContent] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Load all content
   useEffect(() => {
+    const filters = state?.filters || {};
+    
     const loadContent = async () => {
       try {
         setLoading(true);
@@ -25,14 +25,12 @@ export default function FilterResults() {
         ]);
         
         const combined = [...movies, ...series];
-        setAllContent(combined);
         
         // Apply filters
         const filtered = applyFilters(combined, filters);
         setFilteredContent(filtered);
       } catch (error) {
         console.error('Error loading and filtering content:', error);
-        setAllContent([]);
         setFilteredContent([]);
       } finally {
         setLoading(false);
@@ -40,7 +38,7 @@ export default function FilterResults() {
     };
 
     loadContent();
-  }, []);
+  }, [state?.filters]);
 
   const applyFilters = (content, filters) => {
     let filtered = [...content];

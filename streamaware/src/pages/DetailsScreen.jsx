@@ -12,7 +12,34 @@ export default function DetailsScreen() {
   const { state } = useLocation();
   const item = state?.item;
 
-  // Redirect if no item data
+  // Initialize all hooks first (before any conditional returns)
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
+  const [showAuthPopup, setShowAuthPopup] = useState(false);
+
+  // guest detection helper
+  function isGuestUser() {
+    return (typeof window !== 'undefined' && window.localStorage && localStorage.getItem('isGuest') === '1');
+  }
+
+  // On mount, load favorites if logged in
+  useEffect(() => {
+    // Only proceed if we have item data
+    if (!item) return;
+    
+    const uid = auth?.currentUser?.uid;
+    if (uid) {
+      getUserFavorites(uid).then(list => {
+        const contentId = item.id || item.title;
+        const has = list.some(f => f.id === contentId);
+        setIsFavorite(has);
+      }).catch(err => {
+        console.error('Failed to load favorites', err);
+      });
+    }
+  }, [item]);
+
+  // Redirect if no item data (after hooks are initialized)
   if (!item) {
     console.warn('No item data found, redirecting to search');
     navigate('/search');
@@ -31,29 +58,6 @@ export default function DetailsScreen() {
     platforms: item.platforms,
     image: item.image
   });
-
-  // guest detection helper
-  function isGuestUser() {
-    return (typeof window !== 'undefined' && window.localStorage && localStorage.getItem('isGuest') === '1');
-  }
-
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [favLoading, setFavLoading] = useState(false);
-  const [showAuthPopup, setShowAuthPopup] = useState(false);
-
-  // On mount, load favorites if logged in
-  useEffect(() => {
-    const uid = auth?.currentUser?.uid;
-    if (uid) {
-      getUserFavorites(uid).then(list => {
-        const contentId = item.id || item.title;
-        const has = list.some(f => f.id === contentId);
-        setIsFavorite(has);
-      }).catch(err => {
-        console.error('Failed to load favorites', err);
-      });
-    }
-  }, [item.id, item.title]);
 
   // we no longer analyze hero brightness — we'll always render a subtle top overlay
 
